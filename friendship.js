@@ -1,583 +1,1539 @@
-/* =========================================================
-   FRIENDSHIP DAY — script.js
-   No frameworks, no build step — just DOM + Canvas + a few
-   small Web APIs (Clipboard, Web Share, Web Animations).
-   ========================================================= */
 
-// ---------- Grab elements we'll reuse ----------
-const gradientBg      = document.getElementById("gradientBg");
-const starsLayer      = document.getElementById("starsLayer");
-const floatingLayer   = document.getElementById("floatingLayer");
-const confettiCanvas  = document.getElementById("confettiCanvas");
-const card            = document.getElementById("card");
-const cardContainer   = document.getElementById("cardContainer");
-const form            = document.getElementById("surpriseForm");
-const yourNameInput   = document.getElementById("yourName");
+"use strict";
+
+/* ==========================================================
+   FRIENDSHIP DAY
+   PART 1
+   App Foundation
+   ========================================================== */
+
+
+/* ==========================================================
+   DOM ELEMENTS
+   ========================================================== */
+
+const card = document.getElementById("card");
+const stage = document.querySelector(".stage");
+
+const surpriseForm = document.getElementById("surpriseForm");
+
+const yourNameInput = document.getElementById("yourName");
 const friendNameInput = document.getElementById("friendName");
-const formError       = document.getElementById("formError");
-const messageContent  = document.getElementById("messageContent");
-const quoteEl         = document.getElementById("quote");
-const copyBtn         = document.getElementById("copyBtn");
-const downloadBtn     = document.getElementById("downloadBtn");
-const shareBtn        = document.getElementById("shareBtn");
-const resetBtn        = document.getElementById("resetBtn");
-const toastEl         = document.getElementById("toast");
-const nextSlideBtn    = document.getElementById("nextSlideBtn");
-const stickerStage    = document.getElementById("stickerStage");
-const stickerBackBtn  = document.getElementById("stickerBackBtn");
-const stickerResetBtn = document.getElementById("stickerResetBtn");
+
+const formError = document.getElementById("formError");
+
+const messageContent = document.getElementById("messageContent");
+const quote = document.getElementById("quote");
+
+const generateBtn = document.getElementById("generateBtn");
+
+const copyBtn = document.getElementById("copyBtn");
+const shareBtn = document.getElementById("shareBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const nextSlideBtn = document.getElementById("nextSlideBtn");
+
+const stickerStage = document.getElementById("stickerStage");
+const stickerCard = document.getElementById("stickerCard");
+
+const stickerBackBtn = document.getElementById("stickerBackBtn");
 const stickerDownloadBtn = document.getElementById("stickerDownloadBtn");
 const stickerShareBtn = document.getElementById("stickerShareBtn");
-const cutoutRow1      = document.getElementById("cutoutRow1");
-const cutoutRow2      = document.getElementById("cutoutRow2");
+const stickerResetBtn = document.getElementById("stickerResetBtn");
 
+const cutoutRow1 = document.getElementById("cutoutRow1");
+const cutoutRow2 = document.getElementById("cutoutRow2");
+
+const gradientBg = document.getElementById("gradientBg");
+const glowLayer = document.getElementById("glowLayer");
+const starsLayer = document.getElementById("starsLayer");
+const floatingLayer = document.getElementById("floatingLayer");
+
+const toast = document.getElementById("toast");
+
+const confettiCanvas = document.getElementById("confettiCanvas");
 const ctx = confettiCanvas.getContext("2d");
 
-// Small bit of shared state so download/share/copy always match what's on screen
-const state = { yourName: "", friendName: "", isNight: false, memoryTimer: null };
 
-/* =========================================================
-   1. AMBIENT FLOATING ICONS (hearts / stars / smileys)
-   ========================================================= */
-function initFloatingAmbient() {
-  const icons = ["💙", "💕", "✨", "⭐", "🙂", "💫", "🎀", "🌸", "🦋", "💌", "🧸", "🌟"];
-  const count = 22;
-  for (let i = 0; i < count; i++) {
-    const span = document.createElement("span");
-    span.className = "floaty";
-    span.textContent = icons[Math.floor(Math.random() * icons.length)];
-    const size = 14 + Math.random() * 18;
-    const duration = 10 + Math.random() * 10;
-    const delay = Math.random() * 14;
-    const drift = (Math.random() * 80 - 40) + "px";
-    span.style.left = Math.random() * 100 + "vw";
-    span.style.fontSize = size + "px";
-    span.style.animationDuration = duration + "s";
-    span.style.animationDelay = -delay + "s"; // negative delay = already mid-flight on load
-    span.style.setProperty("--drift", drift);
-    floatingLayer.appendChild(span);
-  }
+/* ==========================================================
+   CONFIGURATION
+   ========================================================== */
+
+const CONFIG = Object.freeze({
+
+    maxNameLength:30,
+
+    floatingIcons:12,
+
+    starCount:140,
+
+    typingSpeed:34,
+
+    quoteDelay:600,
+
+    toastDuration:2200,
+
+    sparkleCount:12,
+
+    confettiCount:160
+
+});
+
+
+/* ==========================================================
+   APP STATE
+   ========================================================== */
+
+const state={
+
+    yourName:"",
+
+    friendName:"",
+
+    currentQuote:"",
+
+    currentMessage:"",
+
+    toastTimer:null,
+
+    memoryTimer:null,
+
+    typing:false,
+
+    confetti:[],
+
+    starsBuilt:false,
+
+    stickerOpen:false
+
+};
+
+
+/* ==========================================================
+   FRIENDSHIP QUOTES
+   ========================================================== */
+
+const QUOTES=[
+
+"True friendship is one of life's greatest gifts.",
+
+"A real friend makes every ordinary day extraordinary.",
+
+"Friends make the world brighter.",
+
+"Good friends multiply happiness.",
+
+"Distance never weakens genuine friendship.",
+
+"Life is better with true friends.",
+
+"Together every memory becomes priceless.",
+
+"Friendship is another word for family.",
+
+"Some friends become unforgettable chapters of life.",
+
+"Every smile becomes brighter with a best friend."
+
+];
+
+
+/* ==========================================================
+   FRIENDSHIP MESSAGES
+   ========================================================== */
+
+const MESSAGES=[
+
+"Thank you for being the reason behind countless smiles.",
+
+"You're one of the best blessings life has ever given me.",
+
+"No matter where life takes us, you'll always have a special place in my heart.",
+
+"Our memories are my favourite treasure.",
+
+"Some friendships never fade—they only grow stronger.",
+
+"You make difficult days easier and happy days unforgettable.",
+
+"Thank you for always believing in me.",
+
+"Friendship like ours deserves to be celebrated every day.",
+
+"You're not just my friend—you are my safe place.",
+
+"I'm grateful that life introduced me to someone like you."
+
+];
+
+
+/* ==========================================================
+   FLOATING EMOJIS
+   ========================================================== */
+
+const FLOATING_ICONS=[
+
+"💙",
+"✨",
+"⭐",
+"💛",
+"🌸",
+"🦋",
+"🎉",
+"💫",
+"🌈",
+"❤️",
+"😊",
+"🎈"
+
+];
+
+
+/* ==========================================================
+   HELPERS
+   ========================================================== */
+
+function random(min,max){
+
+    return Math.random()*(max-min)+min;
+
 }
 
-/* =========================================================
-   2. STARRY SKY (built once, faded in after reveal)
-   ========================================================= */
-function initStars() {
-  const count = 90;
-  for (let i = 0; i < count; i++) {
-    const star = document.createElement("div");
-    star.className = "star";
-    const size = Math.random() * 2.4 + 1;
-    star.style.width = size + "px";
-    star.style.height = size + "px";
-    star.style.top = Math.random() * 100 + "%";
-    star.style.left = Math.random() * 100 + "%";
-    star.style.animationDuration = 2 + Math.random() * 3 + "s";
-    star.style.animationDelay = Math.random() * 4 + "s";
-    starsLayer.appendChild(star);
-  }
+
+function randomInt(min,max){
+
+    return Math.floor(random(min,max+1));
+
 }
 
-// Small drifting "memory" bubbles once night mode kicks in
-function spawnMemory() {
-  const icons = ["💙", "✨", "⭐"];
-  const el = document.createElement("span");
-  el.className = "memory";
-  el.textContent = icons[Math.floor(Math.random() * icons.length)];
-  el.style.left = Math.random() * 100 + "vw";
-  el.style.setProperty("--drift", (Math.random() * 60 - 30) + "px");
-  el.style.animationDuration = 9 + Math.random() * 6 + "s";
-  starsLayer.appendChild(el);
-  setTimeout(() => el.remove(), 16000);
+
+function pick(array){
+
+    return array[randomInt(0,array.length-1)];
+
 }
 
-function startNightMode() {
-  if (state.isNight) return;
-  state.isNight = true;
-  document.body.classList.add("night");
-  gradientBg.classList.add("night");
-  starsLayer.classList.add("visible");
-  spawnMemory();
-  state.memoryTimer = setInterval(spawnMemory, 2200);
+
+function capitalize(text){
+
+    return text
+
+        .trim()
+
+        .replace(/\s+/g," ")
+
+        .replace(/\b\w/g,c=>c.toUpperCase());
+
 }
 
-function stopNightMode() {
-  state.isNight = false;
-  document.body.classList.remove("night");
-  gradientBg.classList.remove("night");
-  starsLayer.classList.remove("visible");
-  clearInterval(state.memoryTimer);
-  starsLayer.querySelectorAll(".memory").forEach((m) => m.remove());
+
+function sanitize(text){
+
+    return capitalize(
+
+        text.replace(/[<>]/g,"")
+
+    );
+
 }
 
-/* =========================================================
-   3. FORM VALIDATION + FLIP REVEAL
-   ========================================================= */
-function buildMessageLines(friend, you) {
-  return [
-    `Dear ${friend},`,
-    "Thank you for being an amazing friend.",
-    "Wishing you endless happiness and unforgettable memories.",
-    "Happy Friendship Day! 💙",
-    `— ${you}`,
-  ];
+
+function wait(ms){
+
+    return new Promise(resolve=>{
+
+        setTimeout(resolve,ms);
+
+    });
+
 }
 
-function buildQuote(friend) {
-  return `“No matter where life takes us, ${friend}, our friendship will always be one of my favorite constellations.”`;
+
+/* ==========================================================
+   CANVAS
+   ========================================================== */
+
+function resizeCanvas(){
+
+    const dpr=window.devicePixelRatio||1;
+
+    confettiCanvas.width=window.innerWidth*dpr;
+
+    confettiCanvas.height=window.innerHeight*dpr;
+
+    confettiCanvas.style.width=window.innerWidth+"px";
+
+    confettiCanvas.style.height=window.innerHeight+"px";
+
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
 }
 
-function renderMessage(friend, you) {
-  messageContent.innerHTML = ""; // safe: only our own template strings + escaped names go in via textContent below
-  const lines = buildMessageLines(friend, you);
+resizeCanvas();
 
-  lines.forEach((text, i) => {
-    const div = document.createElement("div");
-    div.className = "line" + (i === lines.length - 1 ? " signature" : "");
-    div.textContent = text;
-    div.style.animationDelay = 0.25 + i * 0.28 + "s";
-    messageContent.appendChild(div);
-  });
 
-  quoteEl.textContent = buildQuote(friend);
-  quoteEl.classList.remove("visible");
-  setTimeout(() => quoteEl.classList.add("visible"), 0.25 + lines.length * 280 + 300);
-}
+/* ==========================================================
+   INITIALIZE
+   ========================================================== */
 
-function handleGenerate(e) {
-  e.preventDefault();
-  const you = yourNameInput.value.trim();
-  const friend = friendNameInput.value.trim();
+function initialize(){
 
-  if (!you || !friend) {
-    formError.classList.add("visible");
-    card.classList.add("shake");
-    setTimeout(() => card.classList.remove("shake"), 450);
-    return;
-  }
-  formError.classList.remove("visible");
-
-  state.yourName = you;
-  state.friendName = friend;
-
-  renderMessage(friend, you);
-  card.classList.add("flipped");
-
-  // Once the flip has visually happened, layer on the celebration
-  setTimeout(() => {
-    burstConfetti(window.innerWidth / 2, window.innerHeight / 2.4);
-    burstSparkles();
-    startNightMode();
-  }, 550);
-}
-
-function resetCard() {
-  hideStickerSlide();
-  card.classList.remove("flipped");
-  stopNightMode();
-  setTimeout(() => {
-    form.reset();
     formError.classList.remove("visible");
-    messageContent.innerHTML = "";
-    quoteEl.classList.remove("visible");
-    quoteEl.textContent = "";
-    yourNameInput.focus();
-  }, 500);
+
+    quote.textContent="";
+
+    messageContent.textContent="";
+
+    resizeCanvas();
+
 }
 
-/* =========================================================
-   4. CONFETTI BURST (canvas-based particle system)
-   ========================================================= */
-function resizeConfettiCanvas() {
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
+initialize();
+/* ==========================================================
+   FRIENDSHIP DAY
+   PART 2
+   Validation • Card Flip • Message Generation
+   ========================================================== */
+
+
+/* ==========================================================
+   VALIDATION
+   ========================================================== */
+
+function validateForm(){
+
+    const yourName=sanitize(yourNameInput.value);
+
+    const friendName=sanitize(friendNameInput.value);
+
+    if(!yourName||!friendName){
+
+        showFormError("Please enter both names.");
+
+        return false;
+
+    }
+
+    if(yourName.length<2||friendName.length<2){
+
+        showFormError("Names must contain at least 2 letters.");
+
+        return false;
+
+    }
+
+    if(!/[A-Za-z]/.test(yourName)||!/[A-Za-z]/.test(friendName)){
+
+        showFormError("Please enter valid names.");
+
+        return false;
+
+    }
+
+    hideFormError();
+
+    state.yourName=yourName;
+
+    state.friendName=friendName;
+
+    return true;
+
 }
-resizeConfettiCanvas();
-window.addEventListener("resize", resizeConfettiCanvas);
 
-function burstConfetti(originX, originY) {
-  const colors = ["#6C63FF", "#FF8FB1", "#FFC978", "#9AD1FF", "#C9B8FF", "#ffffff"];
-  const particles = [];
-  const count = 90;
 
-  for (let i = 0; i < count; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 3 + Math.random() * 7;
-    particles.push({
-      x: originX,
-      y: originY,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 3,
-      size: 4 + Math.random() * 5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      rotation: Math.random() * Math.PI,
-      vr: (Math.random() - 0.5) * 0.3,
-      life: 1,
+/* ==========================================================
+   ERROR
+   ========================================================== */
+
+function showFormError(message){
+
+    formError.textContent=message;
+
+    formError.classList.add("visible");
+
+    card.classList.remove("shake");
+
+    void card.offsetWidth;
+
+    card.classList.add("shake");
+
+}
+
+
+function hideFormError(){
+
+    formError.classList.remove("visible");
+
+}
+
+
+/* ==========================================================
+   MESSAGE
+   ========================================================== */
+
+function buildMessage(){
+
+    const intro=`Dear ${state.friendName},`;
+
+    const body=pick(MESSAGES);
+
+    const ending=`Happy Friendship Day! 💙
+From,
+${state.yourName}`;
+
+    state.currentMessage=
+
+`${intro}
+
+${body}
+
+${ending}`;
+
+}
+
+
+/* ==========================================================
+   QUOTE
+   ========================================================== */
+
+function buildQuote(){
+
+    state.currentQuote=pick(QUOTES);
+
+}
+
+
+/* ==========================================================
+   TYPEWRITER
+   ========================================================== */
+
+async function typeMessage(text){
+
+    state.typing=true;
+
+    messageContent.innerHTML="";
+
+    const paragraph=document.createElement("p");
+
+    paragraph.className="message-subtitle";
+
+    messageContent.appendChild(paragraph);
+
+    for(let i=0;i<text.length;i++){
+
+        paragraph.textContent+=text[i];
+
+        await wait(CONFIG.typingSpeed);
+
+    }
+
+    state.typing=false;
+
+}
+
+
+/* ==========================================================
+   QUOTE REVEAL
+   ========================================================== */
+
+async function revealQuote(){
+
+    await wait(CONFIG.quoteDelay);
+
+    quote.textContent=`"${state.currentQuote}"`;
+
+    quote.classList.add("show");
+
+}
+
+
+/* ==========================================================
+   CARD FLIP
+   ========================================================== */
+
+function flipCard(){
+
+    card.classList.add("flipped");
+
+}
+
+
+/* ==========================================================
+   DAY TO NIGHT
+   ========================================================== */
+
+function activateNightMode(){
+
+    document.body.classList.add("night");
+
+    starsLayer.classList.add("visible");
+
+}
+
+
+/* ==========================================================
+   GENERATE
+   ========================================================== */
+
+async function generateSurprise(){
+
+    if(state.typing) return;
+
+    if(!validateForm()) return;
+
+    generateBtn.disabled=true;
+
+    buildMessage();
+
+    buildQuote();
+
+    flipCard();
+
+    activateNightMode();
+
+    await wait(700);
+
+    messageContent.classList.add("show");
+
+    await typeMessage(state.currentMessage);
+
+    await revealQuote();
+
+    if(typeof startConfetti==="function"){
+
+        startConfetti();
+
+    }
+
+    generateBtn.disabled=false;
+
+}
+
+
+/* ==========================================================
+   FORM EVENT
+   ========================================================== */
+
+surpriseForm.addEventListener("submit",(event)=>{
+
+    event.preventDefault();
+
+    generateSurprise();
+
+});/* ==========================================================
+   FRIENDSHIP DAY
+   PART 3
+   Stars • Floating Icons • Sparkles • Confetti
+   ========================================================== */
+
+
+/* ==========================================================
+   CREATE STARS
+   ========================================================== */
+
+function createStars() {
+
+    if (state.starsBuilt) return;
+
+    state.starsBuilt = true;
+
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < CONFIG.starCount; i++) {
+
+        const star = document.createElement("span");
+
+        star.className = "star";
+
+        const size = random(1, 3);
+
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+
+        star.style.left = `${random(0, 100)}%`;
+        star.style.top = `${random(0, 100)}%`;
+
+        star.style.animationDuration = `${random(2, 5)}s`;
+        star.style.animationDelay = `${random(0, 4)}s`;
+
+        fragment.appendChild(star);
+
+    }
+
+    starsLayer.appendChild(fragment);
+
+}
+
+
+/* ==========================================================
+   FLOATING EMOJIS
+   ========================================================== */
+
+function spawnFloatingIcon() {
+
+    const icon = document.createElement("span");
+
+    icon.className = "floaty";
+
+    icon.textContent = pick(FLOATING_ICONS);
+
+    icon.style.left = `${random(5, 95)}%`;
+
+    icon.style.fontSize = `${random(18, 34)}px`;
+
+    icon.style.animationDuration = `${random(10, 18)}s`;
+
+    icon.style.setProperty("--drift", `${random(-80, 80)}px`);
+
+    floatingLayer.appendChild(icon);
+
+    icon.addEventListener("animationend", () => {
+
+        icon.remove();
+
     });
-  }
 
-  function tick() {
-    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-    let alive = false;
+}
 
-    particles.forEach((p) => {
-      if (p.life <= 0) return;
-      alive = true;
-      p.vy += 0.12; // gravity
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rotation += p.vr;
-      p.life -= 0.012;
 
-      ctx.save();
-      ctx.globalAlpha = Math.max(p.life, 0);
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-      ctx.restore();
+function startFloatingIcons() {
+
+    clearInterval(state.memoryTimer);
+
+    for (let i = 0; i < CONFIG.floatingIcons; i++) {
+
+        setTimeout(spawnFloatingIcon, i * 300);
+
+    }
+
+    state.memoryTimer = setInterval(
+
+        spawnFloatingIcon,
+
+        1800
+
+    );
+
+}
+
+
+/* ==========================================================
+   SPARKLES
+   ========================================================== */
+
+function createSparkle(x, y) {
+
+    const sparkle = document.createElement("span");
+
+    sparkle.className = "sparkle";
+
+    sparkle.style.left = `${x}px`;
+    sparkle.style.top = `${y}px`;
+
+    document.body.appendChild(sparkle);
+
+    sparkle.addEventListener("animationend", () => {
+
+        sparkle.remove();
+
     });
 
-    if (alive) {
-      requestAnimationFrame(tick);
-    } else {
-      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+}
+
+
+function sparkleBurst() {
+
+    const rect = card.getBoundingClientRect();
+
+    for (let i = 0; i < CONFIG.sparkleCount; i++) {
+
+        createSparkle(
+
+            rect.left + random(20, rect.width - 20),
+
+            rect.top + random(20, rect.height - 20)
+
+        );
+
     }
-  }
-  tick();
+
 }
 
-function burstSparkles() {
-  const rect = cardContainer.getBoundingClientRect();
-  const spots = [
-    { x: rect.left + 10, y: rect.top + 10 },
-    { x: rect.right - 10, y: rect.top + 20 },
-    { x: rect.left + 20, y: rect.bottom - 20 },
-    { x: rect.right - 20, y: rect.bottom - 10 },
-  ];
-  spots.forEach((spot, i) => {
-    setTimeout(() => {
-      const s = document.createElement("span");
-      s.className = "sparkle";
-      s.textContent = "✨";
-      s.style.left = spot.x + "px";
-      s.style.top = spot.y + "px";
-      document.body.appendChild(s);
-      setTimeout(() => s.remove(), 1200);
-    }, i * 140);
-  });
-}
 
-/* =========================================================
-   5. COPY / SHARE
-   ========================================================= */
-function plainMessage() {
-  return buildMessageLines(state.friendName, state.yourName).join("\n");
-}
+/* ==========================================================
+   CONFETTI ENGINE
+   ========================================================== */
 
-function showToast(msg) {
-  toastEl.textContent = msg;
-  toastEl.classList.add("visible");
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toastEl.classList.remove("visible"), 2200);
-}
+const CONFETTI_COLORS = [
 
-async function copyMessage() {
-  const text = plainMessage();
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast("Message copied 📋");
-  } catch (err) {
-    // Fallback for older browsers / no clipboard permission
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    ta.style.position = "fixed";
-    ta.style.opacity = "0";
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-    showToast("Message copied 📋");
-  }
-}
+    "#6c63ff",
+    "#ff8fb1",
+    "#ffc978",
+    "#8ef0ff",
+    "#ffffff",
+    "#8cffb8"
 
-async function shareCard() {
-  const text = plainMessage();
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: "Happy Friendship Day 💙", text });
-    } catch (err) {
-      // user cancelled the share sheet — no action needed
-    }
-  } else {
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast("Sharing isn't supported here — message copied instead 📋");
-    } catch {
-      showToast("Sharing isn't supported on this browser");
-    }
-  }
-}
-
-/* =========================================================
-   6. DOWNLOAD CARD AS PNG (drawn fresh on an offscreen canvas)
-   ========================================================= */
-function wrapText(context, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(" ");
-  let line = "";
-  let lines = [];
-  words.forEach((word) => {
-    const test = line + word + " ";
-    if (context.measureText(test).width > maxWidth && line !== "") {
-      lines.push(line.trim());
-      line = word + " ";
-    } else {
-      line = test;
-    }
-  });
-  lines.push(line.trim());
-  lines.forEach((l, i) => context.fillText(l, x, y + i * lineHeight));
-  return lines.length * lineHeight;
-}
-
-async function downloadCard() {
-  // make sure the custom fonts are actually ready before we measure/draw text
-  await Promise.all([
-    document.fonts.load('700 60px "Dancing Script"'),
-    document.fonts.load('600 30px "Dancing Script"'),
-    document.fonts.load('600 22px "Poppins"'),
-    document.fonts.load('500 24px "Poppins"'),
-    document.fonts.load('400 22px "Poppins"'),
-  ]);
-
-  const W = 900, H = 1150;
-  const off = document.createElement("canvas");
-  off.width = W;
-  off.height = H;
-  const c = off.getContext("2d");
-
-  // Background — matches whichever mode the card is currently in
-  let bgGrad;
-  if (state.isNight) {
-    bgGrad = c.createLinearGradient(0, 0, 0, H);
-    bgGrad.addColorStop(0, "#1b1450");
-    bgGrad.addColorStop(1, "#0b1030");
-    c.fillStyle = bgGrad;
-    c.fillRect(0, 0, W, H);
-    // simple stars
-    c.fillStyle = "#fdf6e3";
-    for (let i = 0; i < 140; i++) {
-      const r = Math.random() * 1.6 + 0.4;
-      c.globalAlpha = Math.random() * 0.8 + 0.2;
-      c.beginPath();
-      c.arc(Math.random() * W, Math.random() * H, r, 0, Math.PI * 2);
-      c.fill();
-    }
-    c.globalAlpha = 1;
-  } else {
-    bgGrad = c.createLinearGradient(0, 0, W, H);
-    bgGrad.addColorStop(0, "#e9f1fb");
-    bgGrad.addColorStop(0.5, "#ece6fb");
-    bgGrad.addColorStop(1, "#fdeaf2");
-    c.fillStyle = bgGrad;
-    c.fillRect(0, 0, W, H);
-  }
-
-  // Glass card panel
-  const pad = 60;
-  const panelX = pad, panelY = 90, panelW = W - pad * 2, panelH = H - 180;
-  const radius = 32;
-  c.save();
-  c.shadowColor = "rgba(46,42,74,0.25)";
-  c.shadowBlur = 40;
-  c.shadowOffsetY = 18;
-  c.fillStyle = state.isNight ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.72)";
-  roundRect(c, panelX, panelY, panelW, panelH, radius);
-  c.fill();
-  c.restore();
-
-  c.strokeStyle = state.isNight ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.9)";
-  c.lineWidth = 2;
-  roundRect(c, panelX, panelY, panelW, panelH, radius);
-  c.stroke();
-
-  const textColor = state.isNight ? "#f3f0ff" : "#2e2a4a";
-  const accent = "#6c63ff";
-
-  // Heading
-  c.textAlign = "center";
-  c.fillStyle = "#e0567a";
-  c.font = "600 22px Poppins";
-  c.fillText("✨ Happy Friendship Day ✨", W / 2, panelY + 70);
-
-  c.fillStyle = textColor;
-  c.font = "700 56px 'Dancing Script'";
-  c.fillText(`Happy Friendship Day 💙`, W / 2, panelY + 150);
-
-  c.font = "400 22px Poppins";
-  c.fillStyle = state.isNight ? "#cfc9f5" : "#6b6490";
-  c.fillText("Some friendships make life more beautiful.", W / 2, panelY + 195);
-
-  // Message body
-  c.textAlign = "left";
-  c.font = "400 26px Poppins";
-  c.fillStyle = textColor;
-  const lines = buildMessageLines(state.friendName, state.yourName);
-  let cursorY = panelY + 280;
-  const bodyX = panelX + 60;
-  const bodyW = panelW - 120;
-
-  lines.forEach((line, i) => {
-    if (i === lines.length - 1) {
-      c.font = "600 34px 'Dancing Script'";
-      c.fillStyle = accent;
-    } else if (i === 0) {
-      c.font = "600 28px Poppins";
-      c.fillStyle = textColor;
-    } else {
-      c.font = "400 25px Poppins";
-      c.fillStyle = textColor;
-    }
-    cursorY += wrapText(c, line, bodyX, cursorY, bodyW, 38) + 14;
-  });
-
-  // Quote
-  c.font = "italic 500 24px 'Dancing Script'";
-  c.fillStyle = accent;
-  cursorY += 20;
-  cursorY += wrapText(c, buildQuote(state.friendName), bodyX, cursorY, bodyW, 34);
-
-  // Footer mark
-  c.textAlign = "center";
-  c.font = "400 16px Poppins";
-  c.fillStyle = state.isNight ? "rgba(243,240,255,0.6)" : "rgba(107,100,144,0.7)";
-  c.fillText("made with 💙 for Friendship Day", W / 2, H - 45);
-
-  off.toBlob((blob) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `friendship-day-${(state.friendName || "card").toLowerCase().replace(/\s+/g, "-")}.png`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    showToast("Card downloaded ⬇️");
-  }, "image/png");
-}
-
-function roundRect(c, x, y, w, h, r) {
-  c.beginPath();
-  c.moveTo(x + r, y);
-  c.arcTo(x + w, y, x + w, y + h, r);
-  c.arcTo(x + w, y + h, x, y + h, r);
-  c.arcTo(x, y + h, x, y, r);
-  c.arcTo(x, y, x + w, y, r);
-  c.closePath();
-}
-
-/* =========================================================
-   7. SLIDE 3 — SCRAPBOOK STICKER CARD
-   ========================================================= */
-
-// A handful of paper-cutout "swatches" (bg + text colour) and font treatments,
-// mixed together so each letter looks like it was snipped from a different magazine.
-const CUTOUT_SWATCHES = [
-  { bg: "#f4e9da", fg: "#1f1b1b" },
-  { bg: "#e9553b", fg: "#ffffff" },
-  { bg: "#1f1b1b", fg: "#ffffff" },
-  { bg: "#a9c9e8", fg: "#1f1b1b" },
-  { bg: "#e8b93e", fg: "#1f1b1b" },
-  { bg: "#f2a6c0", fg: "#1f1b1b" },
-  { bg: "#8fae8b", fg: "#ffffff" },
-  { bg: "#ffffff", fg: "#1f1b1b" },
-];
-const CUTOUT_FONTS = [
-  { fontFamily: "'Poppins', sans-serif", fontWeight: 800 },
-  { fontFamily: "Georgia, serif", fontWeight: 700, fontStyle: "italic" },
-  { fontFamily: "'Courier New', monospace", fontWeight: 700 },
-  { fontFamily: "'Dancing Script', cursive", fontWeight: 700 },
 ];
 
-function buildCutoutRow(container, word) {
-  container.innerHTML = "";
-  word.split("").forEach((ch) => {
-    const span = document.createElement("span");
-    if (ch === " ") {
-      span.className = "cutout-letter space";
-      span.textContent = "\u00A0";
-      container.appendChild(span);
-      return;
+
+function createConfetti() {
+
+    state.confetti.length = 0;
+
+    for (let i = 0; i < CONFIG.confettiCount; i++) {
+
+        state.confetti.push({
+
+            x: random(0, window.innerWidth),
+
+            y: random(-window.innerHeight, 0),
+
+            width: random(4, 8),
+
+            height: random(8, 16),
+
+            speed: random(2, 6),
+
+            rotation: random(0, 360),
+
+            rotationSpeed: random(-8, 8),
+
+            color: pick(CONFETTI_COLORS)
+
+        });
+
     }
-    const swatch = CUTOUT_SWATCHES[Math.floor(Math.random() * CUTOUT_SWATCHES.length)];
-    const font = CUTOUT_FONTS[Math.floor(Math.random() * CUTOUT_FONTS.length)];
-    span.className = "cutout-letter";
-    span.textContent = ch;
-    span.style.background = swatch.bg;
-    span.style.color = swatch.fg;
-    span.style.fontFamily = font.fontFamily;
-    span.style.fontWeight = font.fontWeight;
-    if (font.fontStyle) span.style.fontStyle = font.fontStyle;
-    span.style.setProperty("--rot", (Math.random() * 14 - 7).toFixed(1) + "deg");
-    container.appendChild(span);
-  });
+
 }
 
-function initStickerSlide() {
-  buildCutoutRow(cutoutRow1, "HAPPY");
-  buildCutoutRow(cutoutRow2, "FRIENDSHIP DAY");
+
+function drawConfetti() {
+
+    ctx.clearRect(
+
+        0,
+
+        0,
+
+        window.innerWidth,
+
+        window.innerHeight
+
+    );
+
+    state.confetti.forEach(piece => {
+
+        ctx.save();
+
+        ctx.translate(piece.x, piece.y);
+
+        ctx.rotate(piece.rotation * Math.PI / 180);
+
+        ctx.fillStyle = piece.color;
+
+        ctx.fillRect(
+
+            -piece.width / 2,
+
+            -piece.height / 2,
+
+            piece.width,
+
+            piece.height
+
+        );
+
+        ctx.restore();
+
+        piece.y += piece.speed;
+
+        piece.rotation += piece.rotationSpeed;
+
+    });
+
+    state.confetti = state.confetti.filter(
+
+        piece => piece.y < window.innerHeight + 30
+
+    );
+
 }
 
-function showStickerSlide() {
-  stickerStage.classList.add("active");
+
+/* ==========================================================
+   CONFETTI LOOP
+   ========================================================== */
+
+let confettiAnimation = null;
+
+function animateConfetti() {
+
+    drawConfetti();
+
+    if (state.confetti.length > 0) {
+
+        confettiAnimation = requestAnimationFrame(
+
+            animateConfetti
+
+        );
+
+    } else {
+
+        cancelAnimationFrame(confettiAnimation);
+
+    }
+
 }
 
-function hideStickerSlide() {
-  stickerStage.classList.remove("active");
+
+function startConfetti() {
+
+    createConfetti();
+
+    animateConfetti();
+
 }
 
-async function downloadStickerCard() {
-  await Promise.all([
-    document.fonts.load('800 40px "Poppins"'),
-    document.fonts.load('700 40px "Dancing Script"'),
-  ]);
 
-  const W = 1000, H = 640;
-  const off = document.createElement("canvas");
-  off.width = W;
-  off.height = H;
-  const c = off.getContext("2d");
+/* ==========================================================
+   START ALL VISUAL EFFECTS
+   ========================================================== */
 
-  // paper base
-  const grad = c.createLinearGradient(0, 0, W, H);
-  grad.addColorStop(0, "#f7f3ec");
-  grad.addColorStop(0.55, "#efe9df");
-  grad.addColorStop(1, "#f7f3ec");
-  c.fillStyle = grad;
-  c.fillRect(0, 0, W, H);
-  c.fillStyle = "rgba(0,0,0,0.04)";
-  for (let i = 0; i < 40; i++) {
-    c.beginPath();
-    c.arc(Math.random() * W, Math.random() * H, Math.random() * 60 + 10, 0, Math.PI * 2);
-    c.fill();
-  }
+function startVisualEffects() {
 
-  // decorative emoji
-  c.textAlign = "center";
-  c.font = "40px serif";
-  const deco = [
-    ["❤️", W * 0.1, H * 0.15], ["⭐", W * 0.32, H * 0.1], ["⭐", W * 0.72, H * 0.12],
-    ["💛", W * 0.92, H * 0.2], ["✨", W * 0.1, H * 0.85], ["🩷", W * 0.9, H * 0.82],
-  ];
-  deco.forEach(([emoji, x, y]) => c.fillText(emoji, x, y));
+    createStars();
 
-  function drawCutoutWord(word, centerY, fontSize) {
-    // measure total width first so the word can be centred
-    c.font = `800 ${fontSize}px Poppins`;
-    const letters = word.split("");
-    const gap = fontSize * 0.18;
-    const widths = letters.map((ch) => (ch === " " ? fontSize * 0.5 : c.measureText(ch).width + fontSize * 0.5));
-    const totalW = widths.reduce((a, b) => a + b + gap, -gap);
-    let x = W / 2 - totalW / 2;
+    startFloatingIcons();
 
-  
+    sparkleBurst();
+
+    startConfetti();
+
+}
+
+/* ==========================================================
+   FRIENDSHIP DAY
+   PART 4A
+   Toast • Copy • Share
+   ========================================================== */
+
+
+/* ==========================================================
+   TOAST
+   ========================================================== */
+
+function showToast(message,type="success"){
+
+    clearTimeout(state.toastTimer);
+
+    toast.textContent=message;
+
+    toast.className="toast";
+
+    toast.classList.add(type);
+
+    toast.classList.add("show");
+
+    state.toastTimer=setTimeout(()=>{
+
+        toast.classList.remove("show");
+
+    },CONFIG.toastDuration);
+
+}
+
+
+/* ==========================================================
+   COPY MESSAGE
+   ========================================================== */
+
+async function copyMessage(){
+
+    try{
+
+        await navigator.clipboard.writeText(
+
+            state.currentMessage+
+
+            "\n\n"+
+
+            state.currentQuote
+
+        );
+
+        showToast(
+
+            "Message copied successfully 💙"
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+
+            "Unable to copy message",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   SHARE MESSAGE
+   ========================================================== */
+
+async function shareMessage(){
+
+    const shareData={
+
+        title:"Happy Friendship Day 💙",
+
+        text:
+
+        state.currentMessage+
+
+        "\n\n"+
+
+        `"${state.currentQuote}"`
+
+    };
+
+    if(
+
+        navigator.share
+
+    ){
+
+        try{
+
+            await navigator.share(
+
+                shareData
+
+            );
+
+            showToast(
+
+                "Shared successfully 🎉"
+
+            );
+
+        }
+
+        catch(error){
+
+            if(
+
+                error.name!==
+
+                "AbortError"
+
+            ){
+
+                console.error(error);
+
+            }
+
+        }
+
+    }
+
+    else{
+
+        await copyMessage();
+
+        showToast(
+
+            "Sharing isn't supported. Message copied instead."
+
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   BUTTON EVENTS
+   ========================================================== */
+
+copyBtn.addEventListener(
+
+    "click",
+
+    copyMessage
+
+);
+
+
+shareBtn.addEventListener(
+
+    "click",
+
+    shareMessage
+
+);
+
+
+/* ==========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================== */
+
+document.addEventListener(
+
+    "keydown",
+
+    event=>{
+
+        if(
+
+            event.ctrlKey&&
+
+            event.key.toLowerCase()==="c"&&
+
+            document.activeElement===copyBtn
+
+        ){
+
+            event.preventDefault();
+
+            copyMessage();
+
+        }
+
+    }
+
+);
+/* ==========================================================
+   FRIENDSHIP DAY
+   PART 4B
+   Download • Reset • Cleanup
+   ========================================================== */
+
+
+/* ==========================================================
+   DOWNLOAD CARD
+   ========================================================== */
+
+async function downloadCard(){
+
+    if(typeof html2canvas==="undefined"){
+
+        showToast(
+
+            "html2canvas library not found.",
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+    try{
+
+        showToast("Preparing image...");
+
+        const canvas=await html2canvas(stickerCard,{
+
+            scale:2,
+
+            useCORS:true,
+
+            backgroundColor:null
+
+        });
+
+        const link=document.createElement("a");
+
+        link.download=
+
+        `Friendship-Day-${Date.now()}.png`;
+
+        link.href=canvas.toDataURL("image/png");
+
+        link.click();
+
+        showToast(
+
+            "Card downloaded successfully 📥"
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+
+            "Download failed",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   CLEAR VISUAL EFFECTS
+   ========================================================== */
+
+function stopVisualEffects(){
+
+    clearInterval(state.memoryTimer);
+
+    cancelAnimationFrame(confettiAnimation);
+
+    state.confetti.length=0;
+
+    ctx.clearRect(
+
+        0,
+
+        0,
+
+        confettiCanvas.width,
+
+        confettiCanvas.height
+
+    );
+
+    floatingLayer.innerHTML="";
+
+}
+
+
+/* ==========================================================
+   RESET APPLICATION
+   ========================================================== */
+
+function resetApplication(){
+
+    stopVisualEffects();
+
+    state.yourName="";
+
+    state.friendName="";
+
+    state.currentMessage="";
+
+    state.currentQuote="";
+
+    state.typing=false;
+
+    state.stickerOpen=false;
+
+    surpriseForm.reset();
+
+    hideFormError();
+
+    quote.classList.remove("show");
+
+    quote.textContent="";
+
+    messageContent.innerHTML="";
+
+    messageContent.classList.remove("show");
+
+    card.classList.remove(
+
+        "flipped",
+
+        "shake"
+
+    );
+
+    stickerStage.classList.remove("active");
+
+    stage.classList.remove("hide");
+
+    document.body.classList.remove("night");
+
+    starsLayer.classList.remove("visible");
+
+    generateBtn.disabled=false;
+
+    showToast("Ready for another surprise 💙");
+
+}
+
+
+/* ==========================================================
+   BUTTON EVENTS
+   ========================================================== */
+
+downloadBtn.addEventListener(
+
+    "click",
+
+    downloadCard
+
+);
+
+
+stickerDownloadBtn.addEventListener(
+
+    "click",
+
+    downloadCard
+
+);
+
+
+resetBtn.addEventListener(
+
+    "click",
+
+    resetApplication
+
+);
+
+
+stickerResetBtn.addEventListener(
+
+    "click",
+
+    resetApplication
+
+);
+
+
+/* ==========================================================
+   WINDOW EVENTS
+   ========================================================== */
+
+window.addEventListener(
+
+    "resize",
+
+    resizeCanvas
+
+);
+
+
+window.addEventListener(
+
+    "beforeunload",
+
+    stopVisualEffects
+
+);
+
+/* ==========================================================
+   FRIENDSHIP DAY
+   PART 5
+   Sticker Page • Navigation • Final Initialization
+   ========================================================== */
+
+
+/* ==========================================================
+   CUTOUT LETTERS
+   ========================================================== */
+
+function createCutoutLetters(text){
+
+    cutoutRow1.innerHTML="";
+    cutoutRow2.innerHTML="";
+
+    const clean=text
+        .toUpperCase()
+        .trim();
+
+    const middle=Math.ceil(clean.length/2);
+
+    const first=clean.slice(0,middle);
+
+    const second=clean.slice(middle);
+
+    buildLetters(first,cutoutRow1);
+
+    buildLetters(second,cutoutRow2);
+
+}
+
+
+function buildLetters(text,row){
+
+    [...text].forEach(letter=>{
+
+        const span=document.createElement("span");
+
+        span.className="cutout-letter";
+
+        span.textContent=letter===" " ? "•" : letter;
+
+        span.style.setProperty(
+
+            "--angle",
+
+            `${random(-10,10)}deg`
+
+        );
+
+        span.style.background=
+
+            `hsl(${randomInt(0,360)},85%,94%)`;
+
+        row.appendChild(span);
+
+    });
+
+}
+
+
+/* ==========================================================
+   OPEN STICKER PAGE
+   ========================================================== */
+
+function openStickerPage(){
+
+    state.stickerOpen=true;
+
+    stage.classList.add("hide");
+
+    stickerStage.classList.add("active");
+
+    createCutoutLetters(
+
+        state.friendName
+
+    );
+
+}
+
+
+/* ==========================================================
+   CLOSE STICKER PAGE
+   ========================================================== */
+
+function closeStickerPage(){
+
+    state.stickerOpen=false;
+
+    stage.classList.remove("hide");
+
+    stickerStage.classList.remove("active");
+
+}
+
+
+/* ==========================================================
+   SHARE STICKER
+   ========================================================== */
+
+async function shareSticker(){
+
+    if(typeof html2canvas==="undefined"){
+
+        downloadCard();
+
+        return;
+
+    }
+
+    try{
+
+        const canvas=
+
+        await html2canvas(
+
+            stickerCard,
+
+            {
+
+                scale:2,
+
+                backgroundColor:null,
+
+                useCORS:true
+
+            }
+
+        );
+
+        canvas.toBlob(
+
+            async blob=>{
+
+                if(
+
+                    !blob
+
+                ){
+
+                    showToast(
+
+                        "Unable to create image",
+
+                        "error"
+
+                    );
+
+                    return;
+
+                }
+
+                const file=
+
+                new File(
+
+                    [blob],
+
+                    "Friendship-Day.png",
+
+                    {
+
+                        type:"image/png"
+
+                    }
+
+                );
+
+                if(
+
+                    navigator.canShare &&
+
+                    navigator.canShare({
+
+                        files:[file]
+
+                    })
+
+                ){
+
+                    await navigator.share({
+
+                        files:[file],
+
+                        title:"Happy Friendship Day 💙"
+
+                    });
+
+                }
+
+                else{
+
+                    downloadCard();
+
+                }
+
+            },
+
+            "image/png"
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        showToast(
+
+            "Sharing failed",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   BUTTON EVENTS
+   ========================================================== */
+
+nextSlideBtn.addEventListener(
+
+    "click",
+
+    openStickerPage
+
+);
+
+
+stickerBackBtn.addEventListener(
+
+    "click",
+
+    closeStickerPage
+
+);
+
+
+stickerShareBtn.addEventListener(
+
+    "click",
+
+    shareSticker
+
+);
+
+
+/* ==========================================================
+   ESC KEY SUPPORT
+   ========================================================== */
+
+document.addEventListener(
+
+    "keydown",
+
+    event=>{
+
+        if(
+
+            event.key==="Escape" &&
+
+            state.stickerOpen
+
+        ){
+
+            closeStickerPage();
+
+        }
+
+    }
+
+);
+
+
+/* ==========================================================
+   STARTUP
+   ========================================================== */
+
+function startApp(){
+
+    resizeCanvas();
+
+    createStars();
+
+    hideFormError();
+
+    quote.textContent="";
+
+    messageContent.innerHTML="";
+
+    window.addEventListener(
+
+        "resize",
+
+       
