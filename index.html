@@ -2,30 +2,85 @@
 <html lang="en">
 
 <head>
-    <!-- Basic Meta -->
+
+    <!-- ======================================================
+         BASIC META
+    ======================================================= -->
+
     <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <title>Happy Friendship Day 💙</title>
 
     <meta name="description"
-          content="Create a beautiful animated Friendship Day card for your best friend.">
+          content="A beautiful animated Friendship Day surprise card with glassmorphism, 3D flip animation, confetti, stars, scrapbook page and sharing support.">
+
+    <meta name="keywords"
+          content="Friendship Day, Greeting Card, Friendship, HTML, CSS, JavaScript, Surprise Card">
+
+    <meta name="author"
+          content="Krrish Deep Singh">
+
+
+    <!-- ======================================================
+         THEME
+    ======================================================= -->
 
     <meta name="theme-color"
-          content="#6c63ff">
+          content="#6C63FF">
 
-    <!-- Open Graph -->
+    <meta name="color-scheme"
+          content="light dark">
+
+
+    <!-- ======================================================
+         OPEN GRAPH
+    ======================================================= -->
+
     <meta property="og:title"
           content="Happy Friendship Day 💙">
 
     <meta property="og:description"
-          content="Generate a beautiful Friendship Day greeting card.">
+          content="Celebrate Friendship Day with a beautiful interactive animated greeting card.">
 
     <meta property="og:type"
           content="website">
 
-    <!-- Fonts -->
+    <meta property="og:image"
+          content="assets/preview.png">
+
+
+    <!-- ======================================================
+         TWITTER
+    ======================================================= -->
+
+    <meta name="twitter:card"
+          content="summary_large_image">
+
+    <meta name="twitter:title"
+          content="Happy Friendship Day 💙">
+
+    <meta name="twitter:description"
+          content="Interactive Friendship Day Greeting Card">
+
+
+    <!-- ======================================================
+         FAVICON
+    ======================================================= -->
+
+    <link rel="icon"
+          type="image/png"
+          href="assets/favicon.png">
+
+
+    <!-- ======================================================
+         PRECONNECT
+    ======================================================= -->
+
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
 
@@ -33,320 +88,443 @@
           href="https://fonts.gstatic.com"
           crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+
+    <!-- ======================================================
+         GOOGLE FONTS
+    ======================================================= -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap"
           rel="stylesheet">
 
-    <!-- CSS -->
+
+    <!-- ======================================================
+         STYLESHEET
+    ======================================================= -->
+
     <link rel="stylesheet"
           href="friendship.css">
+
+
+    <!-- ======================================================
+         HTML2CANVAS
+    ======================================================= -->
+
+    <script defer
+            src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
+    </script>
+
+
+    <!-- ======================================================
+         MAIN SCRIPT
+    ======================================================= -->
+
+    <script defer
+            src="friendship.js">
+    </script>
+
 </head>
 
 <body>
+<!-- ======================================================
+     BACKGROUND LAYERS
+====================================================== -->
 
-    <!-- =========================
-         Animated Background
-    ========================== -->
+<div id="gradientBg"
+     class="gradient-bg"
+     aria-hidden="true">
+</div>
 
-    <div class="gradient-bg"
-         id="gradientBg"></div>
+<div id="glowLayer"
+     class="glow-layer"
+     aria-hidden="true">
 
-    <div class="glow-layer"
-         id="glowLayer"
-         aria-hidden="true">
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+    <div class="glow-blob blob-4"></div>
 
-        <span class="glow-blob blob-1"></span>
-        <span class="glow-blob blob-2"></span>
-        <span class="glow-blob blob-3"></span>
-        <span class="glow-blob blob-4"></span>
+</div>
 
-    </div>
+<div id="starsLayer"
+     class="stars-layer"
+     aria-hidden="true">
+</div>
 
-    <div class="stars-layer"
-         id="starsLayer"
-         aria-hidden="true"></div>
+<div id="floatingLayer"
+     class="floating-layer"
+     aria-hidden="true">
+</div>
 
-    <div class="floating-layer"
-         id="floatingLayer"
-         aria-hidden="true"></div>
 
-    <canvas id="confettiCanvas"
-            class="confetti-canvas"
-            aria-hidden="true"></canvas>
+<!-- ======================================================
+     CONFETTI CANVAS
+====================================================== -->
 
-    <!-- =========================
-         Main Section
-    ========================== -->
+<canvas id="confettiCanvas"
+        class="confetti-canvas"
+        aria-hidden="true">
+</canvas>
 
-    <main class="stage">
 
-        <section class="card-container"
-                 id="cardContainer">
+<!-- ======================================================
+     MAIN STAGE
+====================================================== -->
 
-            <article class="card"
-                     id="card">
+<main class="stage"
+      id="stage">
 
-                <!-- FRONT -->
+    <section class="card-container">
 
-                <section class="card-face card-front"
-                         aria-labelledby="mainHeading">
+        <!-- =============================================
+             3D CARD
+        ============================================== -->
 
-                    <p class="eyebrow">
-                        ✨ A little surprise for someone special
-                    </p>
+        <article class="card"
+                 id="card">
 
-                    <h1 class="title"
-                        id="mainHeading">
+            <!-- =========================================
+                 FRONT
+            ========================================== -->
 
-                        Happy Friendship Day
+            <section class="card-face card-front">
 
-                        <span class="title-heart"
-                              aria-hidden="true">
-                            💙
-                        </span>
+                <p class="eyebrow">
+                    Friendship Day Special
+                </p>
 
-                    </h1>
+                <h1 class="title">
 
-                    <p class="subtitle">
-                        Some friendships make life more beautiful.
-                    </p>
+                    Happy Friendship Day
 
-                    <form id="surpriseForm"
-                          class="form"
-                          autocomplete="off"
-                          novalidate>
+                    <span class="title-heart">
+                        💙
+                    </span>
 
-                        <div class="input-group">
+                </h1>
 
-                            <label for="yourName">
-                                Your Name
-                            </label>
+                <p class="subtitle">
 
-                            <input
-                                id="yourName"
-                                name="yourName"
-                                type="text"
-                                maxlength="30"
-                                placeholder="Enter your name"
-                                spellcheck="false"
-                                required>
+                    Enter both names and unlock
+                    a beautiful Friendship Day
+                    surprise.
 
-                        </div>
+                </p>
 
-                        <div class="input-group">
+                <!-- =====================================
+                     FORM
+                ====================================== -->
 
-                            <label for="friendName">
-                                Friend's Name
-                            </label>
+                <form id="surpriseForm"
+                      class="form"
+                      autocomplete="off"
+                      novalidate>
 
-                            <input
-                                id="friendName"
-                                name="friendName"
-                                type="text"
-                                maxlength="30"
-                                placeholder="Enter friend's name"
-                                spellcheck="false"
-                                required>
+                    <!-- Your Name -->
 
-                        </div>
+                    <div class="input-group">
 
-                        <p id="formError"
-                           class="form-error"
-                           role="alert"
-                           aria-live="polite">
+                        <label for="yourName">
 
-                            Please enter both names.
+                            Your Name
 
-                        </p>
+                        </label>
 
-                        <button
-                            id="generateBtn"
-                            class="btn btn-primary"
-                            type="submit"
-                            aria-label="Generate Friendship Card">
+                        <input
+                            id="yourName"
+                            type="text"
+                            maxlength="30"
+                            placeholder="Enter your name"
+                            required>
 
-                            Open Your Friendship Card 💙
+                    </div>
 
-                        </button>
 
-                    </form>
+                    <!-- Friend Name -->
 
-                </section>
+                    <div class="input-group">
 
-                <!-- BACK -->
+                        <label for="friendName">
 
-                <section class="card-face card-back"
-                         aria-labelledby="messageHeading">
+                            Friend's Name
 
-                    <h2 id="messageHeading"
-                        class="visually-hidden">
+                        </label>
 
-                        Friendship Message
+                        <input
+                            id="friendName"
+                            type="text"
+                            maxlength="30"
+                            placeholder="Enter your friend's name"
+                            required>
 
-                    </h2>
+                    </div>
 
-                    <div id="messageContent"
-                         class="message-content"></div>
 
-                    <blockquote
-                        id="quote"
-                        class="quote"></blockquote>
+                    <!-- Error -->
+
+                    <div id="formError"
+                         class="form-error"
+                         aria-live="polite">
+                    </div>
+
+
+                    <!-- Buttons -->
 
                     <div class="action-buttons">
 
                         <button
-                            id="copyBtn"
-                            class="btn btn-ghost"
-                            type="button">
+                            id="generateBtn"
+                            class="btn btn-primary"
+                            type="submit">
 
-                            📋 Copy
-
-                        </button>
-
-                        <button
-                            id="downloadBtn"
-                            class="btn btn-ghost"
-                            type="button">
-
-                            ⬇ Download
-
-                        </button>
-
-                        <button
-                            id="shareBtn"
-                            class="btn btn-ghost"
-                            type="button">
-
-                            🔗 Share
-
-                        </button>
-
-                        <button
-                            id="resetBtn"
-                            class="btn btn-reset"
-                            type="button">
-
-                            ↺ Create Another
+                            Generate Surprise ✨
 
                         </button>
 
                     </div>
 
+                </form>
+
+            </section>
+
+
+            <!-- =========================================
+                 BACK
+            ========================================== -->
+
+            <section class="card-face card-back">
+
+                <div id="messageContent"
+                     class="message-content">
+
+                    <h2 class="message-title">
+
+                        Happy Friendship Day 💙
+
+                    </h2>
+
+                </div>
+
+                <blockquote
+                    id="quote"
+                    class="quote">
+                </blockquote>
+
+                <div class="action-buttons">
+
                     <button
-                        id="nextSlideBtn"
-                        class="next-slide-btn"
+                        id="copyBtn"
+                        class="btn btn-ghost"
                         type="button">
 
-                        One More Surprise
-
-                        <span class="chevron"
-                              aria-hidden="true">
-
-                            ›
-
-                        </span>
+                        📋 Copy
 
                     </button>
 
-                </section>
+                    <button
+                        id="shareBtn"
+                        class="btn btn-ghost"
+                        type="button">
 
-            </article>
+                        📤 Share
 
-        </section>
+                    </button>
 
-    </main>
+                    <button
+                        id="downloadBtn"
+                        class="btn btn-primary"
+                        type="button">
 
-    <!-- =========================
-         Sticker Slide
-    ========================== -->
+                        📥 Download
 
-    <section
-        id="stickerStage"
-        class="sticker-stage"
-        aria-hidden="true">
+                    </button>
 
-        <button
-            id="stickerBackBtn"
-            class="nav-arrow"
-            type="button"
-            aria-label="Back">
+                    <button
+                        id="resetBtn"
+                        class="btn btn-reset"
+                        type="button">
 
-            ‹
+                        🔄 Reset
 
-        </button>
+                    </button>
 
-        <article
-            class="sticker-card"
-            id="stickerCard">
-
-            <div class="paper-grain"></div>
-
-            <div class="sticker-deco">
-
-                <span class="deco d1">❤️</span>
-                <span class="deco d2">⭐</span>
-                <span class="deco d3">⭐</span>
-                <span class="deco d4">💛</span>
-                <span class="deco d5">✨</span>
-                <span class="deco d6">🩷</span>
-                <span class="deco d7">💫</span>
-
-            </div>
-
-            <div class="cutout-heading">
-
-                <div id="cutoutRow1"
-                     class="cutout-row"></div>
-
-                <div id="cutoutRow2"
-                     class="cutout-row"></div>
-
-            </div>
-
-            <div class="sticker-actions">
+                </div>
 
                 <button
-                    id="stickerDownloadBtn"
-                    class="btn btn-ghost"
+                    id="nextSlideBtn"
+                    class="next-slide-btn"
                     type="button">
 
-                    ⬇ Download
+                    Next Surprise
+
+                    <span class="chevron">
+
+                        →
+
+                    </span>
 
                 </button>
 
-                <button
-                    id="stickerShareBtn"
-                    class="btn btn-ghost"
-                    type="button">
-
-                    🔗 Share
-
-                </button>
-
-                <button
-                    id="stickerResetBtn"
-                    class="btn btn-reset"
-                    type="button">
-
-                    ↺ Create Another
-
-                </button>
-
-            </div>
+            </section>
 
         </article>
 
     </section>
 
-    <!-- Toast -->
+</main>
+<!-- ======================================================
+     STICKER / SCRAPBOOK PAGE
+====================================================== -->
 
-    <div id="toast"
-         class="toast"
-         role="status"
-         aria-live="polite"></div>
+<section id="stickerStage"
+         class="sticker-stage"
+         aria-hidden="true">
 
-    <!-- JavaScript -->
+    <article id="stickerCard"
+             class="sticker-card">
 
-    <script src="friendship.js" defer></script>
+        <!-- Paper Texture -->
+
+        <div class="paper-grain"></div>
+
+        <!-- Decorative Stickers -->
+
+        <div class="sticker-deco"
+             aria-hidden="true">
+
+            <span class="deco d1">💙</span>
+            <span class="deco d2">⭐</span>
+            <span class="deco d3">🌸</span>
+            <span class="deco d4">✨</span>
+            <span class="deco d5">🦋</span>
+            <span class="deco d6">🎈</span>
+            <span class="deco d7">🌈</span>
+
+        </div>
+
+
+        <!-- Back Button -->
+
+        <button id="stickerBackBtn"
+                class="nav-arrow"
+                type="button"
+                aria-label="Go Back">
+
+            ←
+
+        </button>
+
+
+        <!-- Heading -->
+
+        <div class="cutout-heading">
+
+            <div id="cutoutRow1"
+                 class="cutout-row">
+            </div>
+
+            <div id="cutoutRow2"
+                 class="cutout-row">
+            </div>
+
+        </div>
+
+
+        <!-- Greeting -->
+
+        <section class="message-content">
+
+            <h2 class="message-title">
+
+                Forever Friends 💙
+
+            </h2>
+
+            <p class="message-subtitle">
+
+                True friendship is one of life's
+                greatest treasures. Thank you for
+                being part of this beautiful journey.
+
+            </p>
+
+        </section>
+
+
+        <!-- Sticker Actions -->
+
+        <div class="sticker-actions">
+
+            <button id="stickerShareBtn"
+                    class="btn btn-ghost"
+                    type="button">
+
+                📤 Share Sticker
+
+            </button>
+
+            <button id="stickerDownloadBtn"
+                    class="btn btn-primary"
+                    type="button">
+
+                📥 Download Sticker
+
+            </button>
+
+            <button id="stickerResetBtn"
+                    class="btn btn-reset"
+                    type="button">
+
+                🔄 Create Another
+
+            </button>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+<!-- ======================================================
+     TOAST
+====================================================== -->
+
+<div id="toast"
+     class="toast"
+     role="status"
+     aria-live="polite"
+     aria-atomic="true">
+</div>
+
+
+<!-- ======================================================
+     NOSCRIPT
+====================================================== -->
+
+<noscript>
+
+    <div style="
+        position:fixed;
+        inset:0;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        padding:24px;
+        background:#ffffff;
+        color:#222;
+        font-family:Poppins,sans-serif;
+        text-align:center;
+        z-index:9999;">
+
+        This Friendship Day card requires JavaScript
+        to display animations and interactive
+        features. Please enable JavaScript and
+        reload the page.
+
+    </div>
+
+</noscript>
+
 
 </body>
 
