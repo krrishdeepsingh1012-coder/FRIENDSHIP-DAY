@@ -1,711 +1,3019 @@
-/* =========================================================
-   FRIENDSHIP DAY — style.css
-   Palette: icy blue → lavender → blush pink, glassmorphism,
-   deep indigo ink, warm gold accents. Poppins for UI text,
-   Dancing Script for emotional display text.
-   ========================================================= */
+/* ==========================================================
+   FRIENDSHIP DAY
+   Part 1 — Foundation & Animated Background
+   ========================================================== */
 
-:root {
-  --bg-1: #e9f1fb;
-  --bg-2: #ece6fb;
-  --bg-3: #fdeaf2;
 
-  --glass: rgba(255, 255, 255, 0.55);
-  --glass-strong: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.85);
+/* ==========================================================
+   RESET
+   ========================================================== */
 
-  --ink: #2e2a4a;
-  --ink-soft: #6b6490;
-
-  --accent-1: #6c63ff;
-  --accent-2: #ff8fb1;
-  --gold: #ffc978;
-
-  --night-1: #0b1030;
-  --night-2: #1b1450;
-  --star: #fdf6e3;
-
-  --radius-lg: 24px;
-  --radius-md: 20px;
-  --radius-sm: 14px;
-
-  --shadow-card: 0 20px 60px rgba(108, 99, 255, 0.18), 0 2px 8px rgba(46, 42, 74, 0.06);
-  --shadow-btn: 0 10px 24px rgba(108, 99, 255, 0.28);
-
-  --font-display: "Dancing Script", cursive;
-  --font-body: "Poppins", sans-serif;
+*,
+*::before,
+*::after{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-* { box-sizing: border-box; }
-
-html, body {
-  height: 100%;
-  margin: 0;
+html{
+    scroll-behavior:smooth;
+    -webkit-text-size-adjust:100%;
 }
 
-body {
-  font-family: var(--font-body);
-  color: var(--ink);
-  overflow-x: hidden;
-  min-height: 100vh;
+body{
+    min-height:100vh;
+    overflow-x:hidden;
+    font-family:"Poppins",sans-serif;
+    color:var(--ink);
+    background:#0b1030;
+    position:relative;
 }
 
-/* ---------------------------------------------------------
-   BACKGROUND LAYERS
-   --------------------------------------------------------- */
-
-.gradient-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -3;
-  background: rgb(10, 8, 19);
-  background-size: 400% 400%;
-  animation: gradientShift 16s ease infinite;
-  transition: opacity 1.4s ease;
+img,
+svg,
+canvas{
+    display:block;
+    max-width:100%;
 }
 
-.gradient-bg.night { opacity: 0; }
-
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+button,
+input{
+    font:inherit;
 }
 
-/* soft blurred colour blobs — fills the empty space around the card */
-.glow-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  overflow: hidden;
-  transition: opacity 1s ease;
+button{
+    cursor:pointer;
+    border:none;
+    background:none;
 }
 
-body.night .glow-layer { opacity: 0; }
-
-.glow-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.55;
-  animation: blobDrift 16s ease-in-out infinite;
+input{
+    outline:none;
 }
 
-.blob-1 { width: 260px; height: 260px; top: 6%;  left: -6%; background: radial-gradient(circle, var(--accent-1), transparent 70%); animation-delay: 0s; }
-.blob-2 { width: 320px; height: 320px; bottom: 4%; right: -8%; background: radial-gradient(circle, var(--accent-2), transparent 70%); animation-delay: -4s; }
-.blob-3 { width: 200px; height: 200px; top: 62%; left: 4%;  background: radial-gradient(circle, var(--gold), transparent 70%); animation-delay: -9s; }
-.blob-4 { width: 220px; height: 220px; top: -6%; right: 12%; background: radial-gradient(circle, #b6e3ff, transparent 70%); animation-delay: -13s; }
-
-@keyframes blobDrift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%      { transform: translate(18px, -22px) scale(1.12); }
+a{
+    text-decoration:none;
+    color:inherit;
 }
 
-.stars-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background: radial-gradient(ellipse at 50% 0%, var(--night-2), var(--night-1));
-  opacity: 0;
-  transition: opacity 1.6s ease;
-  pointer-events: none;
-}
-
-.stars-layer.visible { opacity: 1; }
-
-.star {
-  position: absolute;
-  background: var(--star);
-  border-radius: 50%;
-  animation: twinkle linear infinite;
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.15; transform: scale(0.8); }
-  50%      { opacity: 1;    transform: scale(1.15); }
-}
-
-/* Soft drifting "memory" bubbles that appear once it's night */
-.memory {
-  position: absolute;
-  bottom: -40px;
-  font-size: 1.1rem;
-  opacity: 0;
-  animation: memoryFloat linear forwards;
-  pointer-events: none;
-}
-
-@keyframes memoryFloat {
-  0%   { transform: translateY(0) translateX(0); opacity: 0; }
-  10%  { opacity: 0.9; }
-  90%  { opacity: 0.6; }
-  100% { transform: translateY(-110vh) translateX(var(--drift, 20px)); opacity: 0; }
-}
-
-/* ---------------------------------------------------------
-   AMBIENT FLOATING ICONS (hearts / stars / smileys)
-   --------------------------------------------------------- */
-
-.floating-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.floaty {
-  position: absolute;
-  bottom: -60px;
-  opacity: 0.55;
-  animation: floatUp linear infinite;
-  will-change: transform;
-}
-
-@keyframes floatUp {
-  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
-  8%   { opacity: 0.55; }
-  50%  { transform: translateY(-55vh) translateX(var(--drift, 30px)) rotate(10deg); }
-  92%  { opacity: 0.4; }
-  100% { transform: translateY(-115vh) translateX(calc(var(--drift, 30px) * -1)) rotate(-8deg); opacity: 0; }
-}
-
-/* ---------------------------------------------------------
-   STAGE / CARD CONTAINER (3D flip)
-   --------------------------------------------------------- */
-
-.stage {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 28px 18px;
-}
-
-.card-container {
-  width: 100%;
-  max-width: 460px;
-  perspective: 1600px;
-}
-
-.card {
-  position: relative;
-  width: 120%;
-  min-height: 460px;
-  transform-style: preserve-3d;
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-  animation: cardIntro 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.card.flipped { transform: rotateY(180deg); }
-
-@keyframes cardIntro {
-  from { opacity: 0; transform: scale(0.9) translateY(18px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.card-face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  background: var(--glass);
-  backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 36px 28px;
-  overflow-y: auto;
-  max-height: 85vh;
-}
-
-.card-front { justify-content: center; }
-
-.card-back {
-  transform: rotateY(180deg);
-  justify-content: center;
-  align-items: stretch;
-  text-align: center;
-}
-
-/* ---------------------------------------------------------
-   FRONT FACE CONTENT
-   --------------------------------------------------------- */
-
-.eyebrow {
-  margin: 0 0 6px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-1);
-  text-align: center;
-}
-
-.title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2.1rem, 7vw, 2.9rem);
-  line-height: 1.1;
-  margin: 0 0 10px;
-  text-align: center;
-  color: var(--ink);
-}
-
-.title-heart { display: inline-block; animation: heartbeat 1.8s ease-in-out infinite; }
-
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  20%      { transform: scale(1.18); }
-  40%      { transform: scale(1); }
-  60%      { transform: scale(1.12); }
-}
-
-.subtitle {
-  margin: 0 0 28px;
-  text-align: center;
-  font-size: 0.98rem;
-  font-weight: 400;
-  color: var(--ink-soft);
-}
-
-.form { display: flex; flex-direction: column; gap: 18px; }
-
-.input-pair {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 3px;
-}
-
-.input-group { display: flex; flex-direction: column; gap: 6px; }
-
-.input-group label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--ink-soft);
-  padding-left: 3px;
-}
-
-.input-group input {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  padding: 13px 16px;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid rgba(108, 99, 255, 0.18);
-  background: rgba(255, 255, 255, 0.65);
-  color: var(--ink);
-  outline: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-}
-
-.input-group input::placeholder { color: rgba(107, 100, 144, 0.55); }
-
-.input-group input:focus {
-  border-color: var(--accent-1);
-  background: #fff;
-  box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.14);
+ul{
+    list-style:none;
 }
 
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.85; }
-  50%      { transform: scale(1.25); opacity: 1; }
+/* ==========================================================
+   ROOT VARIABLES
+   ========================================================== */
+
+:root{
+
+    /* Background */
+
+    --bg-1:#edf4ff;
+    --bg-2:#ece7ff;
+    --bg-3:#ffeef6;
+
+    /* Night */
+
+    --night-1:#081122;
+    --night-2:#171848;
+
+    /* Text */
+
+    --ink:#2e2a4a;
+    --ink-soft:#6e6894;
+
+    /* Accent */
+
+    --primary:#6c63ff;
+    --secondary:#ff8fb1;
+    --gold:#ffc978;
+
+    /* Glass */
+
+    --glass:rgba(255,255,255,.48);
+
+    --glass-strong:rgba(255,255,255,.68);
+
+    --glass-border:rgba(255,255,255,.82);
+
+    /* Radius */
+
+    --radius-xl:28px;
+    --radius-lg:22px;
+    --radius-md:16px;
+
+    /* Shadows */
+
+    --shadow-card:
+    0 14px 40px rgba(80,70,180,.16);
+
+    --shadow-button:
+    0 8px 24px rgba(108,99,255,.22);
+
+    /* Fonts */
+
+    --display-font:"Dancing Script",cursive;
+    --body-font:"Poppins",sans-serif;
+
 }
 
-.form-error {
-  margin: -8px 0 0;
-  font-size: 0.8rem;
-  color: #e0567a;
-  text-align: center;
-  opacity: 0;
-  height: 0;
-  overflow: hidden;
-  transition: opacity 0.25s ease;
+
+/* ==========================================================
+   BACKGROUND LAYER
+   ========================================================== */
+
+.gradient-bg{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-5;
+
+    background:
+
+    linear-gradient(
+    135deg,
+    var(--bg-1),
+    var(--bg-2),
+    var(--bg-3)
+    );
+
+    background-size:300% 300%;
+
+    animation:gradientShift 18s ease infinite;
+
+    transition:opacity .8s ease;
+
 }
 
-.form-error.visible { opacity: 1; height: auto; margin: -4px 0 0; }
 
-.card.shake { animation: shake 0.45s ease; }
+/* Night */
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%      { transform: translateX(-8px); }
-  40%      { transform: translateX(7px); }
-  60%      { transform: translateX(-5px); }
-  80%      { transform: translateX(4px); }
+.gradient-bg.night{
+
+    opacity:0;
+
 }
 
-/* ---------------------------------------------------------
-   BUTTONS
-   --------------------------------------------------------- */
 
-.btn {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  padding: 14px 22px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+/* ==========================================================
+   GRADIENT ANIMATION
+   ========================================================== */
+
+@keyframes gradientShift{
+
+    0%{
+
+        background-position:0% 50%;
+
+    }
+
+    50%{
+
+        background-position:100% 50%;
+
+    }
+
+    100%{
+
+        background-position:0% 50%;
+
+    }
+
 }
 
-.btn:active { transform: scale(0.96); }
 
-.btn-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  color: #fff;
-  background: rgb(50, 20, 25);
-  box-shadow: var(--shadow-btn);
+/* ==========================================================
+   GLOW BLOBS
+   ========================================================== */
+
+.glow-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:-4;
+
+    transition:opacity .8s ease;
+
 }
 
-.btn-primary:hover { filter: brightness(1.06); box-shadow: 0 14px 30px rgba(108, 99, 255, 0.36); transform: translateY(-2px); }
+body.night .glow-layer{
 
-.btn-sparkle { display: inline-block; animation: sparkleSpin 3s linear infinite; }
+    opacity:0;
 
-@keyframes sparkleSpin {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  50%      { transform: rotate(180deg) scale(1.2); }
 }
 
-.action-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 26px;
+
+.glow-blob{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    filter:blur(42px);
+
+    opacity:.55;
+
+    animation:blobFloat 18s ease-in-out infinite;
+
 }
 
-.btn-ghost {
-  background: rgba(255, 255, 255, 0.55);
-  color: var(--ink);
-  border: 1.5px solid rgba(108, 99, 255, 0.25);
-  font-size: 0.82rem;
-  padding: 12px 10px;
+
+/* Blob 1 */
+
+.blob-1{
+
+    width:260px;
+
+    height:260px;
+
+    top:-60px;
+
+    left:-70px;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(108,99,255,.75),
+
+    transparent 70%);
+
 }
 
-.btn-ghost:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(108, 99, 255, 0.16); }
 
-.btn-reset {
-  grid-column: 1 / -1;
-  background: transparent;
-  color: var(--ink-soft);
-  border: 1.5px dashed rgba(107, 100, 144, 0.4);
-  font-size: 0.82rem;
-  padding: 10px;
+/* Blob 2 */
+
+.blob-2{
+
+    width:320px;
+
+    height:320px;
+
+    bottom:-90px;
+
+    right:-80px;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(255,143,177,.75),
+
+    transparent 70%);
+
+    animation-delay:-5s;
+
 }
 
-.btn-reset:hover { color: var(--ink); border-color: var(--ink-soft); }
 
-.card-back .btn-ghost, .card-back .btn-reset { color: var(--ink); }
-.card.flipped ~ .stars-layer.visible ~ * { color: inherit; }
+/* Blob 3 */
 
-/* When night mode is active, restyle the back-face text/buttons for contrast */
-.night .card-back {
-  background: rgba(20, 18, 46, 0.55);
-  border-color: rgba(255, 255, 255, 0.18);
+.blob-3{
+
+    width:220px;
+
+    height:220px;
+
+    bottom:10%;
+
+    left:6%;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(255,201,120,.72),
+
+    transparent 70%);
+
+    animation-delay:-10s;
+
 }
 
-.night .card-back .message-content,
-.night .card-back .quote { color: #f3f0ff; }
 
-.night .card-back .btn-ghost {
-  background: rgba(255, 255, 255, 0.12);
-  color: #f3f0ff;
-  border-color: rgba(255, 255, 255, 0.28);
+/* Blob 4 */
+
+.blob-4{
+
+    width:250px;
+
+    height:250px;
+
+    top:-70px;
+
+    right:8%;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(168,228,255,.72),
+
+    transparent 70%);
+
+    animation-delay:-14s;
+
 }
 
-.night .card-back .btn-reset { color: rgba(243, 240, 255, 0.8); border-color: rgba(255, 255, 255, 0.35); }
 
-/* "See the sticker slide" nudge at the bottom of the message face */
-.next-slide-btn {
-  margin-top: 14px;
-  align-self: center;
-  background: none;
-  border: none;
-  color: var(--accent-1);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 4px;
+/* Blob Animation */
+
+@keyframes blobFloat{
+
+    0%{
+
+        transform:
+        translate(0,0)
+        scale(1);
+
+    }
+
+    50%{
+
+        transform:
+        translate(25px,-18px)
+        scale(1.08);
+
+    }
+
+    100%{
+
+        transform:
+        translate(0,0)
+        scale(1);
+
+    }
+
 }
 
-.night .card-back .next-slide-btn { color: #cfc9f5; }
 
-.next-slide-btn .chevron {
-  display: inline-block;
-  transition: transform 0.25s ease;
+/* ==========================================================
+   STARRY NIGHT
+   ========================================================== */
+
+.stars-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-3;
+
+    pointer-events:none;
+
+    opacity:0;
+
+    transition:opacity 1s ease;
+
+    background:
+
+    radial-gradient(
+
+    ellipse at top,
+
+    var(--night-2),
+
+    var(--night-1)
+
+    );
+
 }
 
-.next-slide-btn:hover .chevron { transform: translateX(4px); }
 
-/* ---------------------------------------------------------
-   BACK FACE — revealed message
-   --------------------------------------------------------- */
+.stars-layer.visible{
 
-.message-content {
-  font-size: 1.01rem;
-  line-height: 1.88;
-  color: var(--ink);
-  transition: color 0.8s ease;
+    opacity:1;
+
 }
 
-.message-content .line {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: revealLine 0.6s ease forwards;
+
+/* Individual Star */
+
+.star{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    background:#fffef2;
+
+    animation:twinkle linear infinite;
+
 }
 
-.message-content .line.signature {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  margin-top: 6px;
-  color: var(--accent-1);
+
+/* Twinkle */
+
+@keyframes twinkle{
+
+    0%{
+
+        opacity:.15;
+
+        transform:scale(.7);
+
+    }
+
+    50%{
+
+        opacity:1;
+
+        transform:scale(1.15);
+
+    }
+
+    100%{
+
+        opacity:.15;
+
+        transform:scale(.7);
+
+    }
+
 }
 
-@keyframes revealLine {
-  to { opacity: 1; transform: translateY(0); }
+
+/* ==========================================================
+   MEMORY FLOATING ICONS
+   ========================================================== */
+
+.memory{
+
+    position:absolute;
+
+    bottom:-40px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    animation:memoryFloat linear forwards;
+
 }
 
-.quote {
-  margin: 22px 0 4px;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  color: var(--accent-1);
-  opacity: 0;
-  transition: opacity 1s ease, color 0.8s ease;
+
+@keyframes memoryFloat{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+        translateY(0);
+
+    }
+
+    10%{
+
+        opacity:1;
+
+    }
+
+    90%{
+
+        opacity:.6;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:
+        translateY(-110vh)
+        translateX(var(--drift,25px));
+
+    }
+
 }
 
-.quote.visible { opacity: 1; }
 
-/* ---------------------------------------------------------
-   CONFETTI + SPARKLES
-   --------------------------------------------------------- */
+/* ==========================================================
+   FLOATING EMOJIS
+   ========================================================== */
 
-.confetti-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
+.floating-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-2;
+
+    pointer-events:none;
+
+    overflow:hidden;
+
 }
 
-.sparkle {
-  position: fixed;
-  font-size: 1.1rem;
-  pointer-events: none;
-  z-index: 45;
-  animation: sparklePop 1.1s ease forwards;
+
+.floaty{
+
+    position:absolute;
+
+    bottom:-80px;
+
+    opacity:.55;
+
+    animation:floatUp linear infinite;
+
+    will-change:transform;
+
 }
 
-@keyframes sparklePop {
-  0%   { opacity: 0; transform: scale(0.3) rotate(0deg); }
-  30%  { opacity: 1; transform: scale(1.1) rotate(20deg); }
-  100% { opacity: 0; transform: scale(0.6) translateY(-30px) rotate(-15deg); }
+
+/* Float Animation */
+
+@keyframes floatUp{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+        translateY(0)
+        rotate(0deg);
+
+    }
+
+    10%{
+
+        opacity:.6;
+
+    }
+
+    50%{
+
+        transform:
+
+        translateY(-55vh)
+
+        translateX(var(--drift,30px))
+
+        rotate(10deg);
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:
+
+        translateY(-115vh)
+
+        translateX(calc(var(--drift)*-1))
+
+        rotate(-8deg);
+
+    }
+
+}
+/* ==========================================================
+   FRIENDSHIP DAY
+   Part 1 — Foundation & Animated Background
+   ========================================================== */
+
+
+/* ==========================================================
+   RESET
+   ========================================================== */
+
+*,
+*::before,
+*::after{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* ---------------------------------------------------------
-   TOAST
-   --------------------------------------------------------- */
-
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 30px;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--ink);
-  color: #fff;
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 12px 20px;
-  border-radius: 999px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 80;
+html{
+    scroll-behavior:smooth;
+    -webkit-text-size-adjust:100%;
 }
 
-.toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ---------------------------------------------------------
-   SLIDE 3 — SCRAPBOOK STICKER CARD
-   --------------------------------------------------------- */
-
-.sticker-stage {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 18px;
-  opacity: 0;
-  transform: translateX(6%);
-  pointer-events: none;
-  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+body{
+    min-height:100vh;
+    overflow-x:hidden;
+    font-family:"Poppins",sans-serif;
+    color:var(--ink);
+    background:#0b1030;
+    position:relative;
 }
 
-.sticker-stage.active {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
+img,
+svg,
+canvas{
+    display:block;
+    max-width:100%;
 }
 
-.nav-arrow {
-  position: absolute;
-  top: 50%;
-  left: 14px;
-  transform: translateY(-50%);
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  color: var(--ink);
-  font-size: 1.4rem;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(46, 42, 74, 0.15);
-  transition: transform 0.2s ease, background 0.2s ease;
+button,
+input{
+    font:inherit;
 }
 
-.nav-arrow:hover { transform: translateY(-50%) translateX(-3px); background: #fff; }
-
-.sticker-card {
-  position: relative;
-  width: 100%;
-  max-width: 460px;
-  min-height: 480px;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  padding: 40px 26px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 26px;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(0, 0, 0, 0.05), transparent 40%),
-    radial-gradient(circle at 85% 75%, rgba(0, 0, 0, 0.05), transparent 45%),
-    linear-gradient(160deg, #f7f3ec, #efe9df 55%, #f7f3ec);
-  box-shadow: 0 24px 60px rgba(46, 42, 74, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+button{
+    cursor:pointer;
+    border:none;
+    background:none;
 }
 
-/* subtle paper grain, generated with an inline SVG noise filter — no image request needed */
-.paper-grain {
-  position: absolute;
-  inset: 0;
-  opacity: 0.35;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+input{
+    outline:none;
 }
 
-.sticker-deco { position: absolute; inset: 0; pointer-events: none; }
-
-.deco {
-  position: absolute;
-  font-size: 1.7rem;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+a{
+    text-decoration:none;
+    color:inherit;
 }
 
-.d1 { top: 6%;  left: 6%;  font-size: 1.4rem; transform: rotate(-12deg); }
-.d2 { top: 5%;  left: 30%; font-size: 1.6rem; transform: rotate(-6deg); }
-.d3 { top: 4%;  right: 12%; font-size: 1.5rem; transform: rotate(10deg); }
-.d4 { top: 10%; right: 5%; font-size: 1.3rem; transform: rotate(8deg); }
-.d5 { bottom: 12%; left: 8%; font-size: 1.3rem; transform: rotate(-8deg); }
-.d6 { bottom: 8%;  right: 10%; font-size: 1.4rem; transform: rotate(10deg); }
-.d7 { bottom: 20%; right: 20%; font-size: 1.1rem; transform: rotate(-4deg); }
-
-.cutout-heading {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+ul{
+    list-style:none;
 }
 
-.cutout-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-  max-width: 380px;
+
+/* ==========================================================
+   ROOT VARIABLES
+   ========================================================== */
+
+:root{
+
+    /* Background */
+
+    --bg-1:#edf4ff;
+    --bg-2:#ece7ff;
+    --bg-3:#ffeef6;
+
+    /* Night */
+
+    --night-1:#081122;
+    --night-2:#171848;
+
+    /* Text */
+
+    --ink:#2e2a4a;
+    --ink-soft:#6e6894;
+
+    /* Accent */
+
+    --primary:#6c63ff;
+    --secondary:#ff8fb1;
+    --gold:#ffc978;
+
+    /* Glass */
+
+    --glass:rgba(255,255,255,.48);
+
+    --glass-strong:rgba(255,255,255,.68);
+
+    --glass-border:rgba(255,255,255,.82);
+
+    /* Radius */
+
+    --radius-xl:28px;
+    --radius-lg:22px;
+    --radius-md:16px;
+
+    /* Shadows */
+
+    --shadow-card:
+    0 14px 40px rgba(80,70,180,.16);
+
+    --shadow-button:
+    0 8px 24px rgba(108,99,255,.22);
+
+    /* Fonts */
+
+    --display-font:"Dancing Script",cursive;
+    --body-font:"Poppins",sans-serif;
+
 }
 
-.cutout-letter {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 9px;
-  border-radius: 3px;
-  font-size: clamp(1.6rem, 7vw, 2.5rem);
-  line-height: 1;
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.22);
-  transform: rotate(var(--rot, 0deg));
-  transition: transform 0.2s ease;
+
+/* ==========================================================
+   BACKGROUND LAYER
+   ========================================================== */
+
+.gradient-bg{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-5;
+
+    background:
+
+    linear-gradient(
+    135deg,
+    var(--bg-1),
+    var(--bg-2),
+    var(--bg-3)
+    );
+
+    background-size:300% 300%;
+
+    animation:gradientShift 18s ease infinite;
+
+    transition:opacity .8s ease;
+
 }
 
-.cutout-letter.space { padding: 0 10px; box-shadow: none; }
 
-.cutout-row:last-child .cutout-letter { font-size: clamp(1.15rem, 5.2vw, 1.7rem); }
+/* Night */
 
-.sticker-actions {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  width: 100%;
+.gradient-bg.night{
+
+    opacity:0;
+
 }
 
-.sticker-actions .btn-reset { grid-column: 1 / -1; }
 
-/* ---------------------------------------------------------
+/* ==========================================================
+   GRADIENT ANIMATION
+   ========================================================== */
+
+@keyframes gradientShift{
+
+    0%{
+
+        background-position:0% 50%;
+
+    }
+
+    50%{
+
+        background-position:100% 50%;
+
+    }
+
+    100%{
+
+        background-position:0% 50%;
+
+    }
+
+}
+
+
+/* ==========================================================
+   GLOW BLOBS
+   ========================================================== */
+
+.glow-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:-4;
+
+    transition:opacity .8s ease;
+
+}
+
+body.night .glow-layer{
+
+    opacity:0;
+
+}
+
+
+.glow-blob{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    filter:blur(42px);
+
+    opacity:.55;
+
+    animation:blobFloat 18s ease-in-out infinite;
+
+}
+
+
+/* Blob 1 */
+
+.blob-1{
+
+    width:260px;
+
+    height:260px;
+
+    top:-60px;
+
+    left:-70px;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(108,99,255,.75),
+
+    transparent 70%);
+
+}
+
+
+/* Blob 2 */
+
+.blob-2{
+
+    width:320px;
+
+    height:320px;
+
+    bottom:-90px;
+
+    right:-80px;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(255,143,177,.75),
+
+    transparent 70%);
+
+    animation-delay:-5s;
+
+}
+
+
+/* Blob 3 */
+
+.blob-3{
+
+    width:220px;
+
+    height:220px;
+
+    bottom:10%;
+
+    left:6%;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(255,201,120,.72),
+
+    transparent 70%);
+
+    animation-delay:-10s;
+
+}
+
+
+/* Blob 4 */
+
+.blob-4{
+
+    width:250px;
+
+    height:250px;
+
+    top:-70px;
+
+    right:8%;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(168,228,255,.72),
+
+    transparent 70%);
+
+    animation-delay:-14s;
+
+}
+
+
+/* Blob Animation */
+
+@keyframes blobFloat{
+
+    0%{
+
+        transform:
+        translate(0,0)
+        scale(1);
+
+    }
+
+    50%{
+
+        transform:
+        translate(25px,-18px)
+        scale(1.08);
+
+    }
+
+    100%{
+
+        transform:
+        translate(0,0)
+        scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   STARRY NIGHT
+   ========================================================== */
+
+.stars-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-3;
+
+    pointer-events:none;
+
+    opacity:0;
+
+    transition:opacity 1s ease;
+
+    background:
+
+    radial-gradient(
+
+    ellipse at top,
+
+    var(--night-2),
+
+    var(--night-1)
+
+    );
+
+}
+
+
+.stars-layer.visible{
+
+    opacity:1;
+
+}
+
+
+/* Individual Star */
+
+.star{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    background:#fffef2;
+
+    animation:twinkle linear infinite;
+
+}
+
+
+/* Twinkle */
+
+@keyframes twinkle{
+
+    0%{
+
+        opacity:.15;
+
+        transform:scale(.7);
+
+    }
+
+    50%{
+
+        opacity:1;
+
+        transform:scale(1.15);
+
+    }
+
+    100%{
+
+        opacity:.15;
+
+        transform:scale(.7);
+
+    }
+
+}
+
+
+/* ==========================================================
+   MEMORY FLOATING ICONS
+   ========================================================== */
+
+.memory{
+
+    position:absolute;
+
+    bottom:-40px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    animation:memoryFloat linear forwards;
+
+}
+
+
+@keyframes memoryFloat{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+        translateY(0);
+
+    }
+
+    10%{
+
+        opacity:1;
+
+    }
+
+    90%{
+
+        opacity:.6;
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:
+        translateY(-110vh)
+        translateX(var(--drift,25px));
+
+    }
+
+}
+
+
+/* ==========================================================
+   FLOATING EMOJIS
+   ========================================================== */
+
+.floating-layer{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:-2;
+
+    pointer-events:none;
+
+    overflow:hidden;
+
+}
+
+
+.floaty{
+
+    position:absolute;
+
+    bottom:-80px;
+
+    opacity:.55;
+
+    animation:floatUp linear infinite;
+
+    will-change:transform;
+
+}
+
+
+/* Float Animation */
+
+@keyframes floatUp{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+        translateY(0)
+        rotate(0deg);
+
+    }
+
+    10%{
+
+        opacity:.6;
+
+    }
+
+    50%{
+
+        transform:
+
+        translateY(-55vh)
+
+        translateX(var(--drift,30px))
+
+        rotate(10deg);
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:
+
+        translateY(-115vh)
+
+        translateX(calc(var(--drift)*-1))
+
+        rotate(-8deg);
+
+    }
+
+}
+}
+
+
+/* ==========================================================
+   PART 2A
+   STAGE • CARD • 3D FLIP • CARD FACES
+   ========================================================== */
+
+
+/* ==========================================================
+   MAIN STAGE
+   ========================================================== */
+
+.stage{
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:32px 18px;
+
+}
+
+
+/* ==========================================================
+   CARD CONTAINER
+   ========================================================== */
+
+.card-container{
+
+    width:100%;
+
+    max-width:460px;
+
+    perspective:1800px;
+
+    position:relative;
+
+}
+
+
+/* ==========================================================
+   CARD
+   ========================================================== */
+
+.card{
+
+    position:relative;
+
+    width:100%;
+
+    min-height:540px;
+
+    transform-style:preserve-3d;
+
+    transition:
+    transform .9s cubic-bezier(.22,1,.36,1);
+
+    animation:cardIntro .8s cubic-bezier(.22,1,.36,1);
+
+}
+
+
+/* Flip */
+
+.card.flipped{
+
+    transform:rotateY(180deg);
+
+}
+
+
+/* ==========================================================
+   CARD INTRO
+   ========================================================== */
+
+@keyframes cardIntro{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+        translateY(24px)
+
+        scale(.95);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+
+        translateY(0)
+
+        scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   CARD FACE
+   ========================================================== */
+
+.card-face{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:36px 28px;
+
+    border-radius:var(--radius-xl);
+
+    overflow:hidden;
+
+    backface-visibility:hidden;
+
+    -webkit-backface-visibility:hidden;
+
+    background:var(--glass);
+
+    border:1px solid var(--glass-border);
+
+    backdrop-filter:blur(14px) saturate(160%);
+
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+
+    box-shadow:var(--shadow-card);
+
+}
+
+
+/* ==========================================================
+   FRONT
+   ========================================================== */
+
+.card-front{
+
+    justify-content:center;
+
+}
+
+
+/* ==========================================================
+   BACK
+   ========================================================== */
+
+.card-back{
+
+    transform:rotateY(180deg);
+
+    justify-content:center;
+
+    align-items:stretch;
+
+    text-align:center;
+
+}
+
+
+/* ==========================================================
+   NIGHT MODE CARD
+   ========================================================== */
+
+body.night .card-face{
+
+    background:
+
+    rgba(20,18,46,.55);
+
+    border-color:
+
+    rgba(255,255,255,.16);
+
+}
+
+
+/* ==========================================================
+   SMOOTH CONTENT
+   ========================================================== */
+
+.card-face>*{
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+
+/* ==========================================================
+   GLASS SHINE
+   ========================================================== */
+
+.card-face::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    linear-gradient(
+
+        135deg,
+
+        rgba(255,255,255,.35),
+
+        transparent 45%,
+
+        transparent 55%,
+
+        rgba(255,255,255,.08)
+
+    );
+
+    pointer-events:none;
+
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media(max-width:480px){
+
+    .stage{
+
+        padding:22px 14px;
+
+    }
+
+    .card{
+
+        min-height:500px;
+
+    }
+
+    .card-face{
+
+        padding:28px 20px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET+
+   ========================================================== */
+
+@media(min-width:768px){
+
+    .card-container{
+
+        max-width:500px;
+
+    }
+
+}
+/* ==========================================================
+   PART 2B
+   TYPOGRAPHY • FORM • INPUTS • BUTTONS
+   ========================================================== */
+
+
+/* ==========================================================
+   FRONT CONTENT
+   ========================================================== */
+
+.eyebrow{
+
+    margin:0 0 8px;
+
+    text-align:center;
+
+    font-size:.74rem;
+
+    font-weight:600;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+    color:var(--primary);
+
+}
+
+
+.title{
+
+    margin:0 0 12px;
+
+    text-align:center;
+
+    font-family:var(--display-font);
+
+    font-size:clamp(2.2rem,7vw,3rem);
+
+    line-height:1.1;
+
+    font-weight:700;
+
+    color:var(--ink);
+
+}
+
+
+.title-heart{
+
+    display:inline-block;
+
+    animation:heartbeat 1.8s ease-in-out infinite;
+
+}
+
+
+@keyframes heartbeat{
+
+    0%,100%{
+
+        transform:scale(1);
+
+    }
+
+    25%{
+
+        transform:scale(1.18);
+
+    }
+
+    45%{
+
+        transform:scale(1);
+
+    }
+
+    65%{
+
+        transform:scale(1.12);
+
+    }
+
+}
+
+
+.subtitle{
+
+    margin:0 0 30px;
+
+    text-align:center;
+
+    font-size:.98rem;
+
+    line-height:1.8;
+
+    color:var(--ink-soft);
+
+}
+
+
+/* ==========================================================
+   FORM
+   ========================================================== */
+
+.form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+
+.input-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+
+.input-group label{
+
+    padding-left:4px;
+
+    font-size:.82rem;
+
+    font-weight:600;
+
+    color:var(--ink-soft);
+
+}
+
+
+/* ==========================================================
+   INPUT
+   ========================================================== */
+
+.input-group input{
+
+    width:100%;
+
+    height:54px;
+
+    padding:0 18px;
+
+    border-radius:var(--radius-md);
+
+    border:1.5px solid rgba(108,99,255,.18);
+
+    background:rgba(255,255,255,.68);
+
+    color:var(--ink);
+
+    font-size:1rem;
+
+    transition:
+
+    border-color .25s,
+
+    background .25s,
+
+    box-shadow .25s,
+
+    transform .2s;
+
+}
+
+
+.input-group input::placeholder{
+
+    color:rgba(107,100,144,.55);
+
+}
+
+
+.input-group input:hover{
+
+    border-color:rgba(108,99,255,.32);
+
+}
+
+
+.input-group input:focus{
+
+    background:#ffffff;
+
+    border-color:var(--primary);
+
+    box-shadow:
+
+    0 0 0 4px rgba(108,99,255,.14);
+
+}
+
+
+.input-group input:focus{
+
+    animation:inputPop .25s ease;
+
+}
+
+
+@keyframes inputPop{
+
+    from{
+
+        transform:scale(.985);
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   FORM ERROR
+   ========================================================== */
+
+.form-error{
+
+    margin-top:-6px;
+
+    height:0;
+
+    overflow:hidden;
+
+    opacity:0;
+
+    text-align:center;
+
+    font-size:.82rem;
+
+    font-weight:500;
+
+    color:#d74c72;
+
+    transition:
+
+    opacity .25s,
+
+    height .25s,
+
+    margin .25s;
+
+}
+
+
+.form-error.visible{
+
+    height:auto;
+
+    opacity:1;
+
+    margin-top:-2px;
+
+}
+
+
+/* ==========================================================
+   CARD SHAKE
+   ========================================================== */
+
+.card.shake{
+
+    animation:shake .45s ease;
+
+}
+
+
+@keyframes shake{
+
+    0%,100%{
+
+        transform:translateX(0);
+
+    }
+
+    20%{
+
+        transform:translateX(-8px);
+
+    }
+
+    40%{
+
+        transform:translateX(8px);
+
+    }
+
+    60%{
+
+        transform:translateX(-6px);
+
+    }
+
+    80%{
+
+        transform:translateX(5px);
+
+    }
+
+}
+
+
+/* ==========================================================
+   BUTTON BASE
+   ========================================================== */
+
+.btn{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+    width:100%;
+
+    min-height:50px;
+
+    border:none;
+
+    border-radius:var(--radius-md);
+
+    font-family:var(--body-font);
+
+    font-size:.95rem;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:
+
+    transform .2s,
+
+    box-shadow .25s,
+
+    filter .25s,
+
+    background .25s;
+
+}
+
+
+.btn:active{
+
+    transform:scale(.96);
+
+}
+
+
+/* ==========================================================
+   PRIMARY BUTTON
+   ========================================================== */
+
+.btn-primary{
+
+    color:#ffffff;
+
+    background:
+
+    linear-gradient(
+
+    135deg,
+
+    var(--primary),
+
+    #857cff
+
+    );
+
+    box-shadow:var(--shadow-button);
+
+}
+
+
+.btn-primary:hover{
+
+    transform:translateY(-2px);
+
+    filter:brightness(1.04);
+
+    box-shadow:
+
+    0 14px 28px rgba(108,99,255,.28);
+
+}
+
+
+/* ==========================================================
+   GHOST BUTTON
+   ========================================================== */
+
+.btn-ghost{
+
+    background:
+
+    rgba(255,255,255,.60);
+
+    color:var(--ink);
+
+    border:1px solid rgba(108,99,255,.20);
+
+}
+
+
+.btn-ghost:hover{
+
+    background:#ffffff;
+
+    transform:translateY(-2px);
+
+}
+
+
+/* ==========================================================
+   RESET BUTTON
+   ========================================================== */
+
+.btn-reset{
+
+    background:transparent;
+
+    color:var(--ink-soft);
+
+    border:1.5px dashed rgba(107,100,144,.35);
+
+}
+
+
+.btn-reset:hover{
+
+    color:var(--ink);
+
+    border-color:var(--primary);
+
+}
+
+
+/* ==========================================================
+   ACTION BUTTONS
+   ========================================================== */
+
+.action-buttons{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+
+    margin-top:28px;
+
+}
+
+
+.action-buttons .btn-reset{
+
+    grid-column:1/-1;
+
+}
+
+
+/* ==========================================================
+   NEXT SURPRISE BUTTON
+   ========================================================== */
+
+.next-slide-btn{
+
+    margin-top:18px;
+
+    align-self:center;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    background:none;
+
+    color:var(--primary);
+
+    font-weight:600;
+
+    font-size:.9rem;
+
+    padding:6px 10px;
+
+    transition:.25s;
+
+}
+
+
+.next-slide-btn:hover{
+
+    transform:translateX(3px);
+
+}
+
+
+.chevron{
+
+    transition:transform .25s;
+
+}
+
+
+.next-slide-btn:hover .chevron{
+
+    transform:translateX(5px);
+
+}
+
+
+/* ==========================================================
+   NIGHT MODE
+   ========================================================== */
+
+body.night .btn-ghost{
+
+    background:rgba(255,255,255,.10);
+
+    color:#f5f4ff;
+
+    border-color:rgba(255,255,255,.22);
+
+}
+
+
+body.night .btn-reset{
+
+    color:#d7d2ff;
+
+    border-color:rgba(255,255,255,.28);
+
+}
+
+
+body.night .next-slide-btn{
+
+    color:#d6d0ff;
+
+}
+
+
+/* ==========================================================
    RESPONSIVE
-   --------------------------------------------------------- */
+   ========================================================== */
 
-@media (min-width: 560px) {
-  .input-pair { flex-direction: row; align-items: flex-end; }
-  .connector { height: auto; padding-bottom: 14px; flex-direction: column; width: 34px; }
-  .connector-line { max-width: none; width: 1.5px; height: 14px; background: linear-gradient(180deg, transparent, var(--accent-1), transparent); }
-  .action-buttons { grid-template-columns: 1fr 1fr 1fr; }
-  .btn-reset { grid-column: span 3; }
-  .sticker-actions { grid-template-columns: 1fr 1fr 1fr; }
-  .sticker-actions .btn-reset { grid-column: span 3; }
+@media (min-width:640px){
+
+    .action-buttons{
+
+        grid-template-columns:
+
+        repeat(3,1fr);
+
+    }
+
+    .action-buttons .btn-reset{
+
+        grid-column:1/-1;
+
+    }
+
+}
+/* ==========================================================
+   PART 3A
+   MESSAGE REVEAL • QUOTE • CONFETTI • SPARKLES
+   ========================================================== */
+
+
+/* ==========================================================
+   MESSAGE CONTAINER
+   ========================================================== */
+
+.message-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    gap:16px;
+
+    min-height:220px;
+
+    opacity:0;
+
+    transform:translateY(20px);
+
 }
 
-@media (max-width: 359px) {
-  .card-face { padding: 28px 18px; }
-  .action-buttons { grid-template-columns: 1fr 1fr; }
+
+/* Message visible */
+
+.message-content.show{
+
+    animation:messageReveal .9s ease forwards;
+
 }
 
-/* ---------------------------------------------------------
+
+@keyframes messageReveal{
+
+    0%{
+
+        opacity:0;
+
+        transform:
+        translateY(24px)
+        scale(.96);
+
+    }
+
+    60%{
+
+        opacity:1;
+
+        transform:
+        translateY(-4px)
+        scale(1.02);
+
+    }
+
+    100%{
+
+        opacity:1;
+
+        transform:
+        translateY(0)
+        scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   FRIENDSHIP HEADING
+   ========================================================== */
+
+.message-title{
+
+    font-family:var(--display-font);
+
+    font-size:clamp(2rem,6vw,2.8rem);
+
+    color:var(--primary);
+
+    line-height:1.15;
+
+}
+
+
+.message-subtitle{
+
+    font-size:1rem;
+
+    line-height:1.8;
+
+    color:var(--ink);
+
+    max-width:34ch;
+
+}
+
+
+/* ==========================================================
+   TYPING CURSOR
+   ========================================================== */
+
+.typing-cursor{
+
+    display:inline-block;
+
+    width:2px;
+
+    height:1.2em;
+
+    background:var(--primary);
+
+    margin-left:3px;
+
+    animation:blink .9s infinite;
+
+}
+
+
+@keyframes blink{
+
+    0%,50%{
+
+        opacity:1;
+
+    }
+
+    51%,100%{
+
+        opacity:0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   QUOTE
+   ========================================================== */
+
+.quote{
+
+    margin-top:26px;
+
+    text-align:center;
+
+    font-size:.95rem;
+
+    line-height:1.8;
+
+    color:var(--ink-soft);
+
+    opacity:0;
+
+    transform:translateY(12px);
+
+}
+
+
+.quote.show{
+
+    animation:quoteFade .7s ease forwards;
+
+    animation-delay:.35s;
+
+}
+
+
+
+/* ==========================================================
+   PART 3B
+   TOAST • PAGE TRANSITIONS • NAVIGATION
+   ========================================================== */
+
+
+/* ==========================================================
+   TOAST
+   ========================================================== */
+
+.toast{
+
+    position:fixed;
+
+    left:50%;
+
+    bottom:30px;
+
+    transform:
+    translateX(-50%)
+    translateY(20px);
+
+    min-width:220px;
+
+    max-width:90%;
+
+    padding:14px 22px;
+
+    border-radius:999px;
+
+    background:rgba(34,32,60,.92);
+
+    color:#ffffff;
+
+    font-size:.9rem;
+
+    font-weight:600;
+
+    text-align:center;
+
+    backdrop-filter:blur(16px);
+
+    -webkit-backdrop-filter:blur(16px);
+
+    box-shadow:
+    0 12px 30px rgba(0,0,0,.18);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    z-index:1200;
+
+    transition:
+
+    opacity .35s ease,
+
+    transform .35s ease,
+
+    visibility .35s;
+
+}
+
+
+/* Visible */
+
+.toast.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:
+    translateX(-50%)
+    translateY(0);
+
+}
+
+
+/* Success */
+
+.toast.success{
+
+    background:
+
+    linear-gradient(
+    135deg,
+    #34c759,
+    #22a34b
+    );
+
+}
+
+
+/* Error */
+
+.toast.error{
+
+    background:
+
+    linear-gradient(
+    135deg,
+    #ff5d73,
+    #d93e58
+    );
+
+}
+
+
+/* ==========================================================
+   STICKER PAGE
+   ========================================================== */
+
+.sticker-stage{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:32px;
+
+    visibility:hidden;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:
+
+    opacity .65s ease,
+
+    visibility .65s ease;
+
+}
+
+
+/* Active */
+
+.sticker-stage.active{
+
+    visibility:visible;
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+
+/* ==========================================================
+   PAGE SLIDE
+   ========================================================== */
+
+.stage.hide{
+
+    animation:slideOut .7s ease forwards;
+
+}
+
+
+@keyframes slideOut{
+
+    to{
+
+        opacity:0;
+
+        transform:
+
+        translateX(-120px)
+
+        scale(.95);
+
+    }
+
+}
+
+
+.sticker-stage.active .sticker-card{
+
+    animation:slideIn .9s cubic-bezier(.22,1,.36,1);
+
+}
+
+
+@keyframes slideIn{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+        translateX(120px)
+
+        scale(.9);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+
+        translateX(0)
+
+        scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   NAVIGATION BUTTON
+   ========================================================== */
+
+.nav-arrow{
+
+    position:absolute;
+
+    top:28px;
+
+    left:28px;
+
+    width:54px;
+
+    height:54px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:50%;
+
+    font-size:1.8rem;
+
+    color:var(--ink);
+
+    background:
+
+    rgba(255,255,255,.72);
+
+    border:1px solid rgba(255,255,255,.75);
+
+    backdrop-filter:blur(12px);
+
+    transition:
+
+    transform .25s,
+
+    background .25s,
+
+    box-shadow .25s;
+
+}
+
+
+/* Hover */
+
+.nav-arrow:hover{
+
+    transform:
+
+    translateX(-3px);
+
+    background:#ffffff;
+
+    box-shadow:
+
+    0 12px 24px rgba(0,0,0,.10);
+
+}
+
+
+/* Active */
+
+.nav-arrow:active{
+
+    transform:scale(.94);
+
+}
+
+
+/* ==========================================================
+   FADE ELEMENTS
+   ========================================================== */
+
+.fade-in{
+
+    animation:fadeIn .65s ease forwards;
+
+}
+
+
+.fade-out{
+
+    animation:fadeOut .45s ease forwards;
+
+}
+
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+
+@keyframes fadeOut{
+
+    from{
+
+        opacity:1;
+
+    }
+
+    to{
+
+        opacity:0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   SCALE POP
+   ========================================================== */
+
+.pop{
+
+    animation:pop .45s ease;
+
+}
+
+
+@keyframes pop{
+
+    0%{
+
+        transform:scale(.86);
+
+    }
+
+    70%{
+
+        transform:scale(1.05);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   LOADING STATE
+   ========================================================== */
+
+.loading{
+
+    pointer-events:none;
+
+    opacity:.8;
+
+}
+
+
+.loading::after{
+
+    content:"";
+
+    display:inline-block;
+
+    width:18px;
+
+    height:18px;
+
+    margin-left:10px;
+
+    border-radius:50%;
+
+    border:2px solid rgba(255,255,255,.4);
+
+    border-top-color:#ffffff;
+
+    animation:spin .8s linear infinite;
+
+}
+
+
+@keyframes spin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+
+/* ==========================================================
+   NIGHT MODE
+   ========================================================== */
+
+body.night .toast{
+
+    background:
+
+    rgba(18,20,42,.94);
+
+}
+
+
+body.night .nav-arrow{
+
+    background:
+
+    rgba(34,36,70,.82);
+
+    color:#ffffff;
+
+    border-color:
+
+    rgba(255,255,255,.15);
+
+}
+
+
+body.night .nav-arrow:hover{
+
+    background:
+
+    rgba(50,52,92,.92);
+
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width:480px){
+
+    .toast{
+
+        width:90%;
+
+        font-size:.82rem;
+
+    }
+
+    .nav-arrow{
+
+        width:48px;
+
+        height:48px;
+
+        top:18px;
+
+        left:18px;
+
+    }
+
+}
+/* ==========================================================
+   PART 3C
+   STICKER CARD • SCRAPBOOK • FINAL POLISH
+   ========================================================== */
+
+
+/* ==========================================================
+   STICKER CARD
+   ========================================================== */
+
+.sticker-card{
+
+    position:relative;
+
+    width:min(92vw,520px);
+
+    min-height:650px;
+
+    padding:42px 30px;
+
+    border-radius:32px;
+
+    overflow:hidden;
+
+    background:
+
+    linear-gradient(
+        180deg,
+        #fffdf9,
+        #fff7ef
+    );
+
+    box-shadow:
+        0 24px 60px rgba(0,0,0,.15);
+
+    animation:stickerAppear .8s cubic-bezier(.22,1,.36,1);
+
+}
+
+
+@keyframes stickerAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:
+        translateY(40px)
+        scale(.9);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+        translateY(0)
+        scale(1);
+
+    }
+
+}
+
+
+/* ==========================================================
+   PAPER GRAIN
+   ========================================================== */
+
+.paper-grain{
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:.12;
+
+    pointer-events:none;
+
+    background-image:
+
+        radial-gradient(circle at 20% 30%,rgba(0,0,0,.12) 1px,transparent 1px),
+
+        radial-gradient(circle at 70% 60%,rgba(0,0,0,.08) 1px,transparent 1px),
+
+        radial-gradient(circle at 40% 80%,rgba(0,0,0,.10) 1px,transparent 1px);
+
+    background-size:
+        80px 80px,
+        100px 100px,
+        120px 120px;
+
+}
+
+
+/* ==========================================================
+   DECORATIONS
+   ========================================================== */
+
+.sticker-deco{
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+}
+
+
+.deco{
+
+    position:absolute;
+
+    font-size:1.6rem;
+
+    animation:floatSticker 5s ease-in-out infinite;
+
+}
+
+.d1{top:20px;left:22px;}
+.d2{top:30px;right:34px;}
+.d3{bottom:60px;left:32px;}
+.d4{bottom:30px;right:36px;}
+.d5{top:45%;left:12px;}
+.d6{top:50%;right:18px;}
+.d7{bottom:120px;right:80px;}
+
+
+@keyframes floatSticker{
+
+    0%,100%{
+
+        transform:translateY(0) rotate(0deg);
+
+    }
+
+    50%{
+
+        transform:translateY(-10px) rotate(6deg);
+
+    }
+
+}
+
+
+/* ==========================================================
+   CUTOUT HEADING
+   ========================================================== */
+
+.cutout-heading{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    margin:40px 0;
+
+    align-items:center;
+
+}
+
+
+.cutout-row{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+    gap:8px;
+
+}
+
+
+.cutout-letter{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    width:48px;
+
+    height:56px;
+
+    border-radius:10px;
+
+    background:#fff;
+
+    color:#222;
+
+    font-weight:700;
+
+    font-size:1.4rem;
+
+    box-shadow:
+        0 6px 12px rgba(0,0,0,.12);
+
+    transform:rotate(var(--angle));
+
+}
+
+
+/* ==========================================================
+   STICKER ACTIONS
+   ========================================================== */
+
+.sticker-actions{
+
+    margin-top:40px;
+
+    display:grid;
+
+    gap:14px;
+
+}
+
+
+/* ==========================================================
+   NIGHT MODE
+   ========================================================== */
+
+body.night .sticker-card{
+
+    background:
+
+    linear-gradient(
+        180deg,
+        #252848,
+        #1a1c35
+    );
+
+    color:#fff;
+
+}
+
+body.night .cutout-letter{
+
+    background:#ffffff;
+
+    color:#111;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media(max-width:768px){
+
+    .sticker-card{
+
+        min-height:580px;
+
+        padding:34px 22px;
+
+    }
+
+    .cutout-letter{
+
+        width:42px;
+
+        height:50px;
+
+        font-size:1.2rem;
+
+    }
+
+}
+
+
+@media(max-width:480px){
+
+    .sticker-card{
+
+        border-radius:24px;
+
+        padding:26px 18px;
+
+    }
+
+    .deco{
+
+        font-size:1.25rem;
+
+    }
+
+}
+
+
+/* ==========================================================
    ACCESSIBILITY
-   --------------------------------------------------------- */
+   ========================================================== */
 
-:focus-visible {
-  outline: 2.5px solid var(--accent-1);
-  outline-offset: 2px;
+:focus-visible{
+
+    outline:3px solid var(--primary);
+
+    outline-offset:4px;
+
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+
+/* ==========================================================
+   REDUCED MOTION
+   ========================================================== */
+
+@media(prefers-reduced-motion:reduce){
+
+    *{
+
+        animation:none !important;
+
+        transition:none !important;
+
+        scroll-behavior:auto !important;
+
+    }
+
 }
+
+
+/* ==========================================================
+   END OF STYLESHEET
+   ========================================================== */
