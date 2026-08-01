@@ -2,132 +2,352 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Friendship Day 💙</title>
+    <!-- Basic Meta -->
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-  <!-- Google Fonts: Dancing Script for emotional display text, Poppins for clean UI text -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet" />
+    <title>Happy Friendship Day 💙</title>
 
-  <link rel="stylesheet" href="friendship.css" />
+    <meta name="description"
+          content="Create a beautiful animated Friendship Day card for your best friend.">
+
+    <meta name="theme-color"
+          content="#6c63ff">
+
+    <!-- Open Graph -->
+    <meta property="og:title"
+          content="Happy Friendship Day 💙">
+
+    <meta property="og:description"
+          content="Generate a beautiful Friendship Day greeting card.">
+
+    <meta property="og:type"
+          content="website">
+
+    <!-- Fonts -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="friendship.css">
 </head>
 
 <body>
 
-  <!-- Layer 1: animated pastel gradient, always present -->
-  <div class="gradient-bg" id="gradientBg"></div>
+    <!-- =========================
+         Animated Background
+    ========================== -->
 
-  <!-- Layer 1b: soft blurred colour blobs so the backdrop doesn't feel empty -->
-  <div class="glow-layer" id="glowLayer" aria-hidden="true">
-    <span class="glow-blob blob-1"></span>
-    <span class="glow-blob blob-2"></span>
-    <span class="glow-blob blob-3"></span>
-    <span class="glow-blob blob-4"></span>
-  </div>
+    <div class="gradient-bg"
+         id="gradientBg"></div>
 
-  <!-- Layer 2: starry night sky, fades in after the surprise is revealed -->
-  <div class="stars-layer" id="starsLayer"></div>
+    <div class="glow-layer"
+         id="glowLayer"
+         aria-hidden="true">
 
-  <!-- Layer 3: ambient floating hearts / stars / smileys, sits above the background -->
-  <div class="floating-layer" id="floatingLayer"></div>
+        <span class="glow-blob blob-1"></span>
+        <span class="glow-blob blob-2"></span>
+        <span class="glow-blob blob-3"></span>
+        <span class="glow-blob blob-4"></span>
 
-  <!-- Layer 4: full-screen canvas used only for the confetti burst -->
-  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+    </div>
 
-  <main class="stage">
-    <div class="card-container" id="cardContainer">
-      <div class="card" id="card">
+    <div class="stars-layer"
+         id="starsLayer"
+         aria-hidden="true"></div>
 
-        <!-- FRONT FACE: greeting + name inputs -->
-        <section class="card-face card-front" id="cardFront">
-          <p class="eyebrow">✨ A little something for a special someone</p>
-          <h1 class="title">Happy Friendship&nbsp;Day <span class="title-heart">💙</span></h1>
-          <p class="subtitle">Some friendships make life more beautiful.</p>
+    <div class="floating-layer"
+         id="floatingLayer"
+         aria-hidden="true"></div>
 
-          <form class="form" id="surpriseForm" novalidate>
-            <div class="input-pair">
-              <div class="input-group">
-                <label for="yourName">Your name</label>
-                <input type="text" id="yourName" name="yourName" placeholder="Enter name " maxlength="30"
-                  autocomplete="off" />
-              </div>
+    <canvas id="confettiCanvas"
+            class="confetti-canvas"
+            aria-hidden="true"></canvas>
 
+    <!-- =========================
+         Main Section
+    ========================== -->
 
+    <main class="stage">
 
-              <div class="input-group">
-                <label for="friendName">Friend's name</label>
-                <input type="text" id="friendName" name="friendName" placeholder="Enter name" maxlength="30"
-                  autocomplete="off" />
-              </div>
+        <section class="card-container"
+                 id="cardContainer">
+
+            <article class="card"
+                     id="card">
+
+                <!-- FRONT -->
+
+                <section class="card-face card-front"
+                         aria-labelledby="mainHeading">
+
+                    <p class="eyebrow">
+                        ✨ A little surprise for someone special
+                    </p>
+
+                    <h1 class="title"
+                        id="mainHeading">
+
+                        Happy Friendship Day
+
+                        <span class="title-heart"
+                              aria-hidden="true">
+                            💙
+                        </span>
+
+                    </h1>
+
+                    <p class="subtitle">
+                        Some friendships make life more beautiful.
+                    </p>
+
+                    <form id="surpriseForm"
+                          class="form"
+                          autocomplete="off"
+                          novalidate>
+
+                        <div class="input-group">
+
+                            <label for="yourName">
+                                Your Name
+                            </label>
+
+                            <input
+                                id="yourName"
+                                name="yourName"
+                                type="text"
+                                maxlength="30"
+                                placeholder="Enter your name"
+                                spellcheck="false"
+                                required>
+
+                        </div>
+
+                        <div class="input-group">
+
+                            <label for="friendName">
+                                Friend's Name
+                            </label>
+
+                            <input
+                                id="friendName"
+                                name="friendName"
+                                type="text"
+                                maxlength="30"
+                                placeholder="Enter friend's name"
+                                spellcheck="false"
+                                required>
+
+                        </div>
+
+                        <p id="formError"
+                           class="form-error"
+                           role="alert"
+                           aria-live="polite">
+
+                            Please enter both names.
+
+                        </p>
+
+                        <button
+                            id="generateBtn"
+                            class="btn btn-primary"
+                            type="submit"
+                            aria-label="Generate Friendship Card">
+
+                            Open Your Friendship Card 💙
+
+                        </button>
+
+                    </form>
+
+                </section>
+
+                <!-- BACK -->
+
+                <section class="card-face card-back"
+                         aria-labelledby="messageHeading">
+
+                    <h2 id="messageHeading"
+                        class="visually-hidden">
+
+                        Friendship Message
+
+                    </h2>
+
+                    <div id="messageContent"
+                         class="message-content"></div>
+
+                    <blockquote
+                        id="quote"
+                        class="quote"></blockquote>
+
+                    <div class="action-buttons">
+
+                        <button
+                            id="copyBtn"
+                            class="btn btn-ghost"
+                            type="button">
+
+                            📋 Copy
+
+                        </button>
+
+                        <button
+                            id="downloadBtn"
+                            class="btn btn-ghost"
+                            type="button">
+
+                            ⬇ Download
+
+                        </button>
+
+                        <button
+                            id="shareBtn"
+                            class="btn btn-ghost"
+                            type="button">
+
+                            🔗 Share
+
+                        </button>
+
+                        <button
+                            id="resetBtn"
+                            class="btn btn-reset"
+                            type="button">
+
+                            ↺ Create Another
+
+                        </button>
+
+                    </div>
+
+                    <button
+                        id="nextSlideBtn"
+                        class="next-slide-btn"
+                        type="button">
+
+                        One More Surprise
+
+                        <span class="chevron"
+                              aria-hidden="true">
+
+                            ›
+
+                        </span>
+
+                    </button>
+
+                </section>
+
+            </article>
+
+        </section>
+
+    </main>
+
+    <!-- =========================
+         Sticker Slide
+    ========================== -->
+
+    <section
+        id="stickerStage"
+        class="sticker-stage"
+        aria-hidden="true">
+
+        <button
+            id="stickerBackBtn"
+            class="nav-arrow"
+            type="button"
+            aria-label="Back">
+
+            ‹
+
+        </button>
+
+        <article
+            class="sticker-card"
+            id="stickerCard">
+
+            <div class="paper-grain"></div>
+
+            <div class="sticker-deco">
+
+                <span class="deco d1">❤️</span>
+                <span class="deco d2">⭐</span>
+                <span class="deco d3">⭐</span>
+                <span class="deco d4">💛</span>
+                <span class="deco d5">✨</span>
+                <span class="deco d6">🩷</span>
+                <span class="deco d7">💫</span>
+
             </div>
 
-            <p class="form-error" id="formError" role="alert">Please fill in both names </p>
+            <div class="cutout-heading">
 
-            <button type="submit" class="btn btn-primary" id="generateBtn">
-              <span>Generate Surprise</span> <span class="btn-sparkle">✨</span>
-            </button>
-          </form>
-        </section>
+                <div id="cutoutRow1"
+                     class="cutout-row"></div>
 
-        <!-- BACK FACE: revealed message + actions -->
-        <section class="card-face card-back" id="cardBack">
-          <div class="message-content" id="messageContent"></div>
-          <p class="quote" id="quote"></p>
+                <div id="cutoutRow2"
+                     class="cutout-row"></div>
 
-          <div class="action-buttons">
-            <button class="btn btn-ghost" id="copyBtn" type="button">📋 Copy message</button>
-            <button class="btn btn-ghost" id="downloadBtn" type="button">⬇️ Download card</button>
-            <button class="btn btn-ghost" id="shareBtn" type="button">🔗 Share</button>
-            <button class="btn btn-reset" id="resetBtn" type="button">↺ Make another</button>
-          </div>
+            </div>
 
-          <button class="next-slide-btn" id="nextSlideBtn" type="button">
-            One more surprise <span class="chevron">›</span>
-          </button>
-        </section>
+            <div class="sticker-actions">
 
-      </div>
-    </div>
-  </main>
+                <button
+                    id="stickerDownloadBtn"
+                    class="btn btn-ghost"
+                    type="button">
 
-  <!-- SLIDE 3: scrapbook-style sticker card, slides in after the message -->
-  <div class="sticker-stage" id="stickerStage">
-    <button class="nav-arrow nav-back" id="stickerBackBtn" type="button" aria-label="Back to your message">‹</button>
+                    ⬇ Download
 
-    <div class="sticker-card" id="stickerCard">
-      <div class="paper-grain" aria-hidden="true"></div>
+                </button>
 
-      <div class="sticker-deco" aria-hidden="true">
-        <span class="deco d1">❤️</span>
-        <span class="deco d2">⭐</span>
-        <span class="deco d3">⭐</span>
-        <span class="deco d4">💛</span>
-        <span class="deco d5">✨</span>
-        <span class="deco d6">🩷</span>
-        <span class="deco d7">💫</span>
-      </div>
+                <button
+                    id="stickerShareBtn"
+                    class="btn btn-ghost"
+                    type="button">
 
-      <div class="cutout-heading" id="cutoutHeading">
-        <div class="cutout-row" id="cutoutRow1"></div>
-        <div class="cutout-row" id="cutoutRow2"></div>
-      </div>
+                    🔗 Share
 
-      <div class="sticker-actions">
-        <button class="btn btn-ghost" id="stickerDownloadBtn" type="button">⬇️ Download</button>
-        <button class="btn btn-ghost" id="stickerShareBtn" type="button">🔗 Share</button>
-        <button class="btn btn-reset" id="stickerResetBtn" type="button">↺ Make another</button>
-      </div>
-    </div>
-  </div>
+                </button>
 
-  <!-- Small floating toast for copy / share feedback -->
-  <div class="toast" id="toast"></div>
+                <button
+                    id="stickerResetBtn"
+                    class="btn btn-reset"
+                    type="button">
 
-  <script src="friendship.js"></script>
+                    ↺ Create Another
+
+                </button>
+
+            </div>
+
+        </article>
+
+    </section>
+
+    <!-- Toast -->
+
+    <div id="toast"
+         class="toast"
+         role="status"
+         aria-live="polite"></div>
+
+    <!-- JavaScript -->
+
+    <script src="friendship.js" defer></script>
+
 </body>
 
 </html>
