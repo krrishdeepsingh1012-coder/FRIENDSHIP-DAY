@@ -1,531 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday Kinjal</title>
+<style>
+:root{
+  --pink1:#ffe0ec; --pink2:#ffd1e3; --purple:#c9a7ff; --ink:#4a3350;
+  --card:#fffafc; --accent:#ff6fa5; --accent2:#a879ff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; min-height:100%;
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:linear-gradient(160deg,var(--pink1),var(--pink2) 50%,var(--purple));
+  color:var(--ink); overflow-x:hidden;
+}
+.wrap{max-width:480px;margin:0 auto;padding:20px 18px 60px; position:relative; z-index:1;}
 
-    <!-- ======================================================
-         BASIC META
-    ======================================================= -->
+/* ---- Intro DM screen ---- */
+#intro{
+  position:fixed; inset:0; background:#0b0b10; z-index:50;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px));
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#intro.hide{opacity:0; visibility:hidden; pointer-events:none;}
+.dm-head{color:#eee;font-size:13px;opacity:.7;margin-bottom:14px;letter-spacing:.5px;}
+.bubble{
+  max-width:78%; padding:12px 16px; border-radius:20px; margin:6px 0;
+  font-size:15px; line-height:1.35; opacity:0; transform:translateY(8px);
+  animation:pop .4s forwards;
+}
+.them{background:#26262e; color:#f1f1f1; border-bottom-left-radius:6px; align-self:flex-start;}
+.me{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-bottom-right-radius:6px; align-self:flex-end; margin-left:auto;}
+.dm-col{display:flex; flex-direction:column;}
+@keyframes pop{to{opacity:1; transform:translateY(0);}}
+.typing{display:flex; gap:5px; align-items:center; padding:14px 16px; width:fit-content;}
+.typing span{
+  width:7px; height:7px; border-radius:50%; background:#999;
+  animation:blink 1.1s infinite ease-in-out;
+}
+.typing.me span{background:rgba(255,255,255,.85);}
+.typing span:nth-child(2){animation-delay:.18s;}
+.typing span:nth-child(3){animation-delay:.36s;}
+@keyframes blink{0%,60%,100%{opacity:.3; transform:translateY(0);}30%{opacity:1; transform:translateY(-3px);}}
+#skip{
+  margin-top:16px; align-self:center; background:rgba(255,255,255,.08); color:#ccc;
+  border:1px solid rgba(255,255,255,.2); padding:8px 18px; border-radius:20px;
+  font-size:12px;
+}
 
-    <meta charset="UTF-8">
+/* ---- Main content ---- */
+.hero{text-align:center; padding:30px 0 10px;}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; background:#fff;
+  padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600;
+  color:var(--accent); box-shadow:0 3px 10px rgba(0,0,0,.06); margin-bottom:14px;
+}
+.face{
+  width:120px;height:120px;margin:0 auto 10px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff, #ffe3ee);
+  display:flex;align-items:center;justify-content:center;font-size:56px;
+  box-shadow:0 8px 24px rgba(200,80,140,.25); position:relative;
+}
+.face .badge{position:absolute; bottom:-4px; right:-4px; font-size:28px;
+  filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+h1{font-size:30px;margin:6px 0 2px; color:#3f2a48;}
+.sub{font-family:Georgia,'Times New Roman',serif; font-style:italic; color:var(--accent); font-size:20px; margin:0;}
+.tag{font-size:13px;color:#8a7290;margin-top:8px;}
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+.card{
+  background:var(--card); border-radius:18px; padding:18px 20px; margin:16px 0;
+  box-shadow:0 6px 18px rgba(150,90,140,.12); position:relative;
+}
+.card h3{margin:0 0 8px; font-size:13px; letter-spacing:1px; color:var(--accent2); text-transform:uppercase;}
+.card p{margin:0; font-family:Georgia,serif; font-style:italic; line-height:1.6; font-size:15.5px; color:#4a3350;}
+.emoji-corner{position:absolute; top:-10px; right:14px; font-size:24px;
+  animation:wiggle 1.6s ease-in-out infinite;}
+@keyframes wiggle{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+/* ---- Album ---- */
+.album-title{text-align:center; margin:32px 0 14px;}
+.album-title h2{margin:0; font-size:20px; color:#3f2a48;}
+.album-title p{margin:4px 0 0; font-size:12.5px; color:#8a7290;}
+.polaroid{
+  background:#fff; border-radius:16px; padding:10px 10px 16px; margin:0 auto 18px;
+  max-width:300px; box-shadow:0 10px 24px rgba(150,90,140,.22); transform:rotate(-2deg);
+  position:relative;
+}
+.polaroid:nth-of-type(2){transform:rotate(2deg);}
+.polaroid img{width:100%; border-radius:10px; display:block;}
+.polaroid .cap{text-align:center; font-family:Georgia,serif; font-style:italic; font-size:13px;
+  margin-top:8px; color:#7a5a80;}
+.polaroid .pin{position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-size:20px;}
 
-    <title>Happy Friendship Day 💙</title>
+.wishbox{
+  background:linear-gradient(135deg,#fff,#ffeef5); border-radius:20px; padding:26px 20px;
+  text-align:center; margin-top:24px; box-shadow:0 8px 22px rgba(150,90,140,.15);
+  position:relative; overflow:hidden;
+}
+#wishText{min-height:70px; display:flex; align-items:center; justify-content:center;
+  font-family:Georgia,serif; font-style:italic; font-size:16.5px; padding:0 6px; line-height:1.5;}
+button.pick{
+  border:none; padding:13px 28px; border-radius:30px; font-weight:700; font-size:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; cursor:pointer;
+  box-shadow:0 6px 16px rgba(255,111,165,.4); letter-spacing:.5px; position:relative; z-index:2;
+}
+button.pick:active{transform:scale(.97);}
+.dots{margin-top:10px; font-size:11px; color:#b892c0; position:relative; z-index:2;}
 
-    <meta name="description"
-          content="A beautiful animated Friendship Day surprise card with glassmorphism, 3D flip animation, confetti, stars, scrapbook page and sharing support.">
+footer{text-align:center; margin-top:30px; font-size:12px; color:#a084ac;}
+footer b{color:var(--accent);}
 
-    <meta name="keywords"
-          content="Friendship Day, Greeting Card, Friendship, HTML, CSS, JavaScript, Surprise Card">
+/* confetti */
+.confetti-piece{
+  position:fixed; top:-20px; z-index:60; pointer-events:none; border-radius:2px;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  to{ transform:translateY(110vh) rotate(540deg); opacity:.9; }
+}
 
-    <meta name="author"
-          content="Krrish Deep Singh">
-
-
-    <!-- ======================================================
-         THEME
-    ======================================================= -->
-
-    <meta name="theme-color"
-          content="#6C63FF">
-
-    <meta name="color-scheme"
-          content="light dark">
-
-
-    <!-- ======================================================
-         OPEN GRAPH
-    ======================================================= -->
-
-    <meta property="og:title"
-          content="Happy Friendship Day 💙">
-
-    <meta property="og:description"
-          content="Celebrate Friendship Day with a beautiful interactive animated greeting card.">
-
-    <meta property="og:type"
-          content="website">
-
-    <meta property="og:image"
-          content="assets/preview.png">
-
-
-    <!-- ======================================================
-         TWITTER
-    ======================================================= -->
-
-    <meta name="twitter:card"
-          content="summary_large_image">
-
-    <meta name="twitter:title"
-          content="Happy Friendship Day 💙">
-
-    <meta name="twitter:description"
-          content="Interactive Friendship Day Greeting Card">
-
-
-    <!-- ======================================================
-         FAVICON
-    ======================================================= -->
-
-    <link rel="icon"
-          type="image/png"
-          href="assets/favicon.png">
-
-
-    <!-- ======================================================
-         PRECONNECT
-    ======================================================= -->
-
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-
-    <!-- ======================================================
-         GOOGLE FONTS
-    ======================================================= -->
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap"
-          rel="stylesheet">
-
-
-    <!-- ======================================================
-         STYLESHEET
-    ======================================================= -->
-
-    <link rel="stylesheet"
-          href="friendship.css">
-
-
-    <!-- ======================================================
-         HTML2CANVAS
-    ======================================================= -->
-
-    <script defer
-            src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
-    </script>
-
-
-    <!-- ======================================================
-         MAIN SCRIPT
-    ======================================================= -->
-
-    <script defer
-            src="friendship.js">
-    </script>
-
+@media (prefers-color-scheme: dark){
+  body:not([data-theme="light"]){background:linear-gradient(160deg,#241522,#2e1a30,#1c1330); color:#f3e7f5;}
+  body:not([data-theme="light"]) .card{background:#2e1f33; box-shadow:0 6px 18px rgba(0,0,0,.4);}
+  body:not([data-theme="light"]) .card p{color:#f0e2f2;}
+  body:not([data-theme="light"]) h1{color:#fbeaff;}
+  body:not([data-theme="light"]) .wishbox{background:linear-gradient(135deg,#2e1f33,#3a2140);}
+  body:not([data-theme="light"]) .chip{background:#3a2740;}
+  body:not([data-theme="light"]) .polaroid{background:#241a28;}
+  body:not([data-theme="light"]) .polaroid .cap{color:#d9c2df;}
+}
+</style>
 </head>
-
 <body>
-<!-- ======================================================
-     BACKGROUND LAYERS
-====================================================== -->
 
-<div id="gradientBg"
-     class="gradient-bg"
-     aria-hidden="true">
+<div id="intro">
+  <div class="dm-head">@dora_ki_files &nbsp;·&nbsp; Instagram DM</div>
+  <div class="dm-col" id="dmCol"></div>
+  <button id="skip">tap to open 🎁</button>
 </div>
 
-<div id="glowLayer"
-     class="glow-layer"
-     aria-hidden="true">
-
-    <div class="glow-blob blob-1"></div>
-    <div class="glow-blob blob-2"></div>
-    <div class="glow-blob blob-3"></div>
-    <div class="glow-blob blob-4"></div>
-
-</div>
-
-<div id="starsLayer"
-     class="stars-layer"
-     aria-hidden="true">
-</div>
-
-<div id="floatingLayer"
-     class="floating-layer"
-     aria-hidden="true">
-</div>
-
-
-<!-- ======================================================
-     CONFETTI CANVAS
-====================================================== -->
-
-<canvas id="confettiCanvas"
-        class="confetti-canvas"
-        aria-hidden="true">
-</canvas>
-
-
-<!-- ======================================================
-     MAIN STAGE
-====================================================== -->
-
-<main class="stage"
-      id="stage">
-
-    <section class="card-container">
-
-        <!-- =============================================
-             3D CARD
-        ============================================== -->
-
-        <article class="card"
-                 id="card">
-
-            <!-- =========================================
-                 FRONT
-            ========================================== -->
-
-            <section class="card-face card-front">
-
-                <p class="eyebrow">
-                    Friendship Day Special
-                </p>
-
-                <h1 class="title">
-
-                    Happy Friendship Day
-
-                    <span class="title-heart">
-                        💙
-                    </span>
-
-                </h1>
-
-                <p class="subtitle">
-
-                    Enter both names and unlock
-                    a beautiful Friendship Day
-                    surprise.
-
-                </p>
-
-                <!-- =====================================
-                     FORM
-                ====================================== -->
-
-                <form id="surpriseForm"
-                      class="form"
-                      autocomplete="off"
-                      novalidate>
-
-                    <!-- Your Name -->
-
-                    <div class="input-group">
-
-                        <label for="yourName">
-
-                            Your Name
-
-                        </label>
-
-                        <input
-                            id="yourName"
-                            type="text"
-                            maxlength="30"
-                            placeholder="Enter your name"
-                            required>
-
-                    </div>
-
-
-                    <!-- Friend Name -->
-
-                    <div class="input-group">
-
-                        <label for="friendName">
-
-                            Friend's Name
-
-                        </label>
-
-                        <input
-                            id="friendName"
-                            type="text"
-                            maxlength="30"
-                            placeholder="Enter your friend's name"
-                            required>
-
-                    </div>
-
-
-                    <!-- Error -->
-
-                    <div id="formError"
-                         class="form-error"
-                         aria-live="polite">
-                    </div>
-
-
-                    <!-- Buttons -->
-
-                    <div class="action-buttons">
-
-                        <button
-                            id="generateBtn"
-                            class="btn btn-primary"
-                            type="submit">
-
-                            Generate Surprise ✨
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </section>
-
-
-            <!-- =========================================
-                 BACK
-            ========================================== -->
-
-            <section class="card-face card-back">
-
-                <div id="messageContent"
-                     class="message-content">
-
-                    <h2 class="message-title">
-
-                        Happy Friendship Day 💙
-
-                    </h2>
-
-                </div>
-
-                <blockquote
-                    id="quote"
-                    class="quote">
-                </blockquote>
-
-                <div class="action-buttons">
-
-                    <button
-                        id="copyBtn"
-                        class="btn btn-ghost"
-                        type="button">
-
-                        📋 Copy
-
-                    </button>
-
-                    <button
-                        id="shareBtn"
-                        class="btn btn-ghost"
-                        type="button">
-
-                        📤 Share
-
-                    </button>
-
-                    <button
-                        id="downloadBtn"
-                        class="btn btn-primary"
-                        type="button">
-
-                        📥 Download
-
-                    </button>
-
-                    <button
-                        id="resetBtn"
-                        class="btn btn-reset"
-                        type="button">
-
-                        🔄 Reset
-
-                    </button>
-
-                </div>
-
-                <button
-                    id="nextSlideBtn"
-                    class="next-slide-btn"
-                    type="button">
-
-                    Next Surprise
-
-                    <span class="chevron">
-
-                        →
-
-                    </span>
-
-                </button>
-
-            </section>
-
-        </article>
-
-    </section>
-
-</main>
-<!-- ======================================================
-     STICKER / SCRAPBOOK PAGE
-====================================================== -->
-
-<section id="stickerStage"
-         class="sticker-stage"
-         aria-hidden="true">
-
-    <article id="stickerCard"
-             class="sticker-card">
-
-        <!-- Paper Texture -->
-
-        <div class="paper-grain"></div>
-
-        <!-- Decorative Stickers -->
-
-        <div class="sticker-deco"
-             aria-hidden="true">
-
-            <span class="deco d1">💙</span>
-            <span class="deco d2">⭐</span>
-            <span class="deco d3">🌸</span>
-            <span class="deco d4">✨</span>
-            <span class="deco d5">🦋</span>
-            <span class="deco d6">🎈</span>
-            <span class="deco d7">🌈</span>
-
-        </div>
-
-
-        <!-- Back Button -->
-
-        <button id="stickerBackBtn"
-                class="nav-arrow"
-                type="button"
-                aria-label="Go Back">
-
-            ←
-
-        </button>
-
-
-        <!-- Heading -->
-
-        <div class="cutout-heading">
-
-            <div id="cutoutRow1"
-                 class="cutout-row">
-            </div>
-
-            <div id="cutoutRow2"
-                 class="cutout-row">
-            </div>
-
-        </div>
-
-
-        <!-- Greeting -->
-
-        <section class="message-content">
-
-            <h2 class="message-title">
-
-                Forever Friends 💙
-
-            </h2>
-
-            <p class="message-subtitle">
-
-                True friendship is one of life's
-                greatest treasures. Thank you for
-                being part of this beautiful journey.
-
-            </p>
-
-        </section>
-
-
-        <!-- Sticker Actions -->
-
-        <div class="sticker-actions">
-
-            <button id="stickerShareBtn"
-                    class="btn btn-ghost"
-                    type="button">
-
-                📤 Share Sticker
-
-            </button>
-
-            <button id="stickerDownloadBtn"
-                    class="btn btn-primary"
-                    type="button">
-
-                📥 Download Sticker
-
-            </button>
-
-            <button id="stickerResetBtn"
-                    class="btn btn-reset"
-                    type="button">
-
-                🔄 Create Another
-
-            </button>
-
-        </div>
-
-    </article>
-
-</section>
-
-
-<!-- ======================================================
-     TOAST
-====================================================== -->
-
-<div id="toast"
-     class="toast"
-     role="status"
-     aria-live="polite"
-     aria-atomic="true">
-</div>
-
-
-<!-- ======================================================
-     NOSCRIPT
-====================================================== -->
-
-<noscript>
-
-    <div style="
-        position:fixed;
-        inset:0;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        padding:24px;
-        background:#ffffff;
-        color:#222;
-        font-family:Poppins,sans-serif;
-        text-align:center;
-        z-index:9999;">
-
-        This Friendship Day card requires JavaScript
-        to display animations and interactive
-        features. Please enable JavaScript and
-        reload the page.
-
-    </div>
-
-</noscript>
-
-
-</body>
-
-</html>
+<div class="wrap">
+  <div class="hero">
+    <div class="chip">👺 official pagall chhokri appreciation page</div>
+    <div class="face">🐼<span class="badge">👺</span></div>
+    <h1>Happy Birthday</h1>
+    <p class="sub">Kinjal ✨</p>
+    <p class="tag">from your online badmosh, Dora 👺</p>
+  </div>
+
+  <div class="card">
+    <div class="emoji-corner">👺</div>
+    <h3>the scary emoji</h3>
+    <p>you send one 👺 and my whole brain just... surrenders. 4.5 years and I still haven't won a single fight against you. today's the one day I'll admit it in writing: you win, always, madam ji. 👺 is basically your royal seal now.</p>
+  </div>
+
+  <div class="card">
+    <div class="emoji-corner">🧠💗</div>
+    <h3>my therapist by heart</h3>
+    <p>no degree, no clinic, no fees — just you, somehow always knowing exactly what to say when my head's a mess. thank you for being the calm to my chaos, pookie, even while being fully unhinged yourself.</p>
+  </div>
+
+  <div class="card">
+    <div class="emoji-corner">🔥</div>
+    <h3>online AND offline mastii</h3>
+    <p>most people pick one mode. you run full mastii on both — chats and real life, no filter, no off switch. and I get to be badmosh right back, at least on text, where I stand a tiny chance against the 👺.</p>
+  </div>
+
+  <div class="card">
+    <div class="emoji-corner">🎈</div>
+    <h3>4.5 years, unbroken</h3>
+    <p>gap or no gap, we met again and it felt exactly the same. same energy, same banter, same bond, same 👺 scaring me into silence. that's rare, pagall chhokri. don't ever change, pookie.</p>
+  </div>
+
+  <div class="album-title">
+    <h2>💗 our little album</h2>
+    <p>proof this bond is real, not just chat bubbles</p>
+  </div>
+
+  <div class="polaroid">
+    <div class="pin">📌</div>
+    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAcFBQYFBAcGBgYIBwcICxILCwoKCxYPEA0SGhYbGhkWGRgcICgiHB4mHhgZIzAkJiorLS4tGyIyNTEsNSgsLSz/2wBDAQcICAsJCxULCxUsHRkdLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCz/wAARCAK8AYkDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5tooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKltrWe8nENtE80p6KgyTUVdb8MrFdR8d2luxIDK5468LQNGE2haojBW0+4BPQeWami8K69MMxaReOPURGvqTTvClnblT5Rdgcgt1rdS2jtzsRQAPbpVPlXUdtbHyF/whviP/oCX3/flqik8L65EQJNJu0J9YjX1nq+px2UJO9CwzgV5xf61NeXhdhz047VG+xap3PDjoOqq206fcg+nlmlHh/VieNOuT/2zNe1wRlj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
